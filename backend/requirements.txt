@@ -1,0 +1,10 @@
+fastapi==0.61.1
+redis==3.5.3
+httpx==0.15.5
+itsdangerous==1.1.0
+uvicorn==0.12.1
+aio_pika
+asyncio
+websockets
+async-timeout
+aioredis
