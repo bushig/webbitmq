@@ -2,13 +2,12 @@ import React, { FC, useEffect, useState } from "react";
 
 import { useParams } from "react-router-dom";
 
-import { getMessagesList, getQueueMeta, MessageData } from "../utils/api";
-import MessageList from "../components/MessageList";
-import styles from "../css/RabbitDetailView.module.css";
-import { RABBIT_EXCHANGE_POSTFIX, RABBIT_QUEUE_POSTFIX } from "../config";
+import { getMessagesList, getQueueMeta, MessageData } from "../../utils/api";
+import MessageList from "../../components/MessageList/MessageList";
+import styles from "./RabbitDetailView.module.css";
+import { RABBIT_EXCHANGE_POSTFIX, RABBIT_QUEUE_POSTFIX } from "../../config";
 
 export const RabbitDetailView: FC = (props) => {
-  console.log(props);
   let { id } = useParams<{ id: string }>();
 
   const [ttl, setTtl] = useState<number>(0);

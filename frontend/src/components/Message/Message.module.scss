@@ -1,0 +1,34 @@
+
+.message_wrapper {
+  /*height: 50px;*/
+  font-family: monospace;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+  background-color: #282824;
+  color: #D9D8D4;
+  font-size: 15px;
+  cursor: pointer;
+  padding: 10px;
+  display: flex;
+  flex-direction: row;
+  border-bottom: 1px dashed #8b8b88;
+  width: 100%;
+  flex: 1;
+  max-height: 50px;
+}
+
+.wrapper_wrapper {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+}
+
+.date {
+  margin-right: 10px;
+  font-size: 12px;
+  font-style: italic;
+  padding-top: 3px;
+  color: lightgreen;
+  width: 100%;
+}
