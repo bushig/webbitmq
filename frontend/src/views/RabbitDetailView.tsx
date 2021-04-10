@@ -4,7 +4,6 @@ import { useParams } from "react-router-dom";
 
 import { getMessagesList, getQueueMeta, MessageData } from "../utils/api";
 import MessageList from "../components/MessageList";
-// import Timer from 'ati-ui-react/components/Timer';
 import styles from "../css/RabbitDetailView.module.css";
 import { RABBIT_EXCHANGE_POSTFIX, RABBIT_QUEUE_POSTFIX } from "../config";
 
