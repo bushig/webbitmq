@@ -8,14 +8,10 @@ type MessageListProps = {
   setMessages: any;
 };
 // TODO: finish component
-const MessageList: FC<MessageListProps> = ({ messages }) => {
-  return (
-    <>
-      {messages.map((message, index) => {
-        return <Message key={index} data={message} />;
-      })}
-    </>
-  );
-};
+const MessageList: FC<MessageListProps> = ({ messages }) => (
+  <>
+    {messages.map((message, index) => <Message key={index} data={message} />)}
+  </>
+);
 
 export default MessageList;

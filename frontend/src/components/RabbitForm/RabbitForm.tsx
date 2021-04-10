@@ -1,8 +1,8 @@
 import React, { FC, useState } from "react";
 
+import { useHistory } from "react-router";
 import { createQueque, QueueData } from "../../utils/api";
 
-import { useHistory } from "react-router";
 
 const fastRabbitAddressOptions = [
   {

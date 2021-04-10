@@ -8,7 +8,7 @@ import styles from "./RabbitDetailView.module.css";
 import { RABBIT_EXCHANGE_POSTFIX, RABBIT_QUEUE_POSTFIX } from "../../config";
 
 export const RabbitDetailView: FC = (props) => {
-  let { id } = useParams<{ id: string }>();
+  const { id } = useParams<{ id: string }>();
 
   const [ttl, setTtl] = useState<number>(0);
   const [routingKey, setRoutingKey] = useState<string>("");
@@ -26,9 +26,7 @@ export const RabbitDetailView: FC = (props) => {
       const notif = new Notification("Новый ивент", {
         body: "Новое сообщение в очереди"
       });
-      setMessages((prevData) => {
-        return [...prevData, data];
-      });
+      setMessages((prevData) => [...prevData, data]);
     };
     return ws;
   };

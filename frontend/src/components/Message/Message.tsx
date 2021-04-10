@@ -3,9 +3,7 @@ import ReactJson from "react-json-view";
 
 import style from "./Message.module.scss";
 
-const JsonToObject = (json: string) => {
-  return JSON.parse(json);
-};
+const JsonToObject = (json: string) => JSON.parse(json);
 
 // TODO: finish component
 const Message: FC<any> = (props) => {
@@ -20,9 +18,7 @@ const Message: FC<any> = (props) => {
     setExpanded(!expanded);
   };
 
-  const renderedData = useMemo(() => {
-    return JsonToObject(realData.payload);
-  }, [realData.payload]);
+  const renderedData = useMemo(() => JsonToObject(realData.payload), [realData.payload]);
   return (
     <div className={style.wrapper_wrapper}>
       <div onClick={switchView} className={style.message_wrapper}>

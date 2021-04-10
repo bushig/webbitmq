@@ -1,5 +1,5 @@
-import { BASE_URL } from "../config";
 import axios from "axios";
+import { BASE_URL } from "../config";
 
 export type QueueData = {
   rabbit_env: string;
@@ -22,7 +22,7 @@ export type MessageData = {
 };
 
 export const createQueque = async (data: QueueData) => {
-  const response = await axios.post(BASE_URL + "/api/execute_drain", data);
+  const response = await axios.post(`${BASE_URL}/api/execute_drain`, data);
 
   if (response.status > 299 || response.status < 200) {
     return Promise.reject(response.data);
