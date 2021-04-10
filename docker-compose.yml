@@ -1,4 +1,4 @@
-version: '3.3'
+version: '3.7'
 services:
   nginx:
     image: nginx:1.17
@@ -8,7 +8,7 @@ services:
       - 8000:80
     depends_on:
       - backend
-#      - frontend
+      - frontend
 
   redis:
     image: redis
@@ -20,24 +20,25 @@ services:
       context: backend
       dockerfile: Dockerfile
     command: python app/main.py
-    tty: true
     volumes:
       - ./backend:/app/:cached
       - ./.docker/.ipython:/root/.ipython:cached
     environment:
       PYTHONPATH: .
 
-#  frontend:
-#    build:
-#      context: frontend
-#      dockerfile: Dockerfile
-#    stdin_open: true
-#    volumes:
-#      - './frontend:/app:cached'
-#      - './frontend/node_modules:/app/node_modules:cached'
-#    environment:
-#      - NODE_ENV=development
+  frontend:
+    build:
+      context: frontend
+      dockerfile: Dockerfile
+    stdin_open: true
+    volumes:
+      - './frontend:/app'
+    #      - './frontend/node_modules:/app/node_modules'
+    environment:
+      - NODE_ENV=development
+    command: npm run start
 
-
-volumes:
-  db-data:
+#  rabbit:
+#    image: rabbitmq:3.8.14-management-alpine
+#    ports:
+#    - 8080:15672

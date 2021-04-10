@@ -1,0 +1,26 @@
+.logo_wrapper {
+  display: flex;
+  width: 300px;
+  flex-direction: row;
+  padding: 10px;
+}
+
+
+.logo {
+  //color: red;
+  //height: 32px;
+  //margin: 16px;
+  //background: rgba(255, 255, 255, 0.3);
+}
+
+.logo_img {
+  width: 60px;
+  height: 60px;
+  border-radius: 20px
+}
+
+.logo_text {
+  font-size: 20px;
+  align-self: center;
+  padding-left: 10px;
+}
