@@ -1,7 +1,7 @@
 version: '3.7'
 services:
   nginx:
-    image: nginx:1.17
+    image: nginx:1.19-alpine
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf
     ports:
@@ -11,7 +11,7 @@ services:
       - frontend
 
   redis:
-    image: redis
+    image: redis:6.2.2-alpine
 
   backend:
     stdin_open: true
@@ -19,7 +19,7 @@ services:
     build:
       context: backend
       dockerfile: Dockerfile
-    command: python app/main.py
+    command: python webbit/main.py
     volumes:
       - ./backend:/app/:cached
       - ./.docker/.ipython:/root/.ipython:cached
@@ -38,7 +38,7 @@ services:
       - NODE_ENV=development
     command: npm run start
 
-#  rabbit:
-#    image: rabbitmq:3.8.14-management-alpine
-#    ports:
-#    - 8080:15672
+  rabbit:
+    image: rabbitmq:3.8.14-management-alpine
+    ports:
+    - 15672:15672

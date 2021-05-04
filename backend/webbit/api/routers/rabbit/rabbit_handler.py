@@ -5,10 +5,10 @@ import aioredis
 from fastapi import APIRouter, BackgroundTasks, HTTPException
 from datetime import datetime, timedelta, timezone
 
-from app.core.rabbit import execute_drain_from_rabbit
-from app.core.schemas import RabbitData, QueueMeta
+from webbit.core.rabbit import execute_drain_from_rabbit
+from webbit.core.schemas import RabbitData, QueueMeta
 
-from app.core.config import RABBITS_MANAGE_URLS
+from webbit.core.config import RABBITS_MANAGE_URLS
 
 rabbit_handler_router = APIRouter()
 

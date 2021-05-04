@@ -1,12 +1,11 @@
 from fastapi import FastAPI, WebSocket
-from starlette.requests import Request
 import uvicorn
 import aioredis
-import asyncio
-import json
-from app.core import config
+from tortoise.contrib.fastapi import register_tortoise
 
-from app.api.api_v1.routers.rabbit_handler import rabbit_handler_router
+from webbit.core import config
+
+from webbit.api.routers.rabbit.rabbit_handler import rabbit_handler_router
 
 app = FastAPI(
     title=config.PROJECT_NAME, docs_url="/api/docs", openapi_url="/api"
@@ -32,6 +31,13 @@ app.include_router(
     prefix="/api",
     tags=["executor"]
 )
+register_tortoise(
+        app,
+        db_url="sqlite://db.sqlite3",
+        modules={"models": ["webbit.db.models"]},
+        generate_schemas=True,
+        add_exception_handlers=True,
+    )
 
 if __name__ == "__main__":
     uvicorn.run("main:app", host="0.0.0.0", reload=True, port=8888, ws="websockets")

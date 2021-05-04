@@ -7,7 +7,7 @@ import json
 from datetime import datetime, timezone
 
 import asyncio
-from app.core.config import RABBITS_URLS
+from webbit.core.config import RABBITS_URLS
 
 
 async def execute_drain_from_rabbit(
