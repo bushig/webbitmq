@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+
+set -e
+set -x
+
+
+flake8 backend
+mypy backend
+
+black --check backend --diff
+isort --check-only backend
