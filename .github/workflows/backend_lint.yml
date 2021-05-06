@@ -1,10 +1,10 @@
-name: Backend lint
+name: Backend lint and test
 
 on: [push, pull_request]
 
 jobs:
-  lint:
-    name: Lint code
+  lint_test:
+    name: Lint backend code
     runs-on: ubuntu-18.04
     steps:
       - uses: actions/checkout@v2
@@ -16,3 +16,8 @@ jobs:
         run: pip install -r backend/dev-requirements.txt
       - name: Run linters
         run: sh ./scripts/lint
+      - name: Run tests
+        env:
+          DB_CONNECTION: sqlite://tests.sqlite3
+        run: |
+          sh ./scripts/test

@@ -3,9 +3,10 @@
 set -e
 set -x
 
+cd backend
 
-flake8 backend
-mypy backend
+flake8
+mypy
 
-black --check backend --diff
-isort --check-only backend
+black --diff
+isort
