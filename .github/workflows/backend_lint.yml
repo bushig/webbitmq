@@ -21,3 +21,5 @@ jobs:
           DB_CONNECTION: sqlite://tests.sqlite3
         run: |
           sh ./scripts/test
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v1
