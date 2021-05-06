@@ -10,10 +10,10 @@ from webbit.core.schemas import RabbitData, QueueMeta
 
 from webbit.core.config import RABBITS_MANAGE_URLS
 
-rabbit_handler_router = APIRouter()
+router = APIRouter()
 
 
-@rabbit_handler_router.get("/{queue_id}/messages")
+@router.get("/{queue_id}/messages")
 async def messages(queue_id: str):
     redis = await aioredis.create_redis_pool(
         'redis://redis', encoding="utf-8")
@@ -21,7 +21,7 @@ async def messages(queue_id: str):
     return [json.loads(msg) for msg in res]
 
 
-@rabbit_handler_router.post("/execute_drain")
+@router.post("/execute_drain")
 async def execute_drain(
         rabbit_data: RabbitData,
         background_tasks: BackgroundTasks,
@@ -54,7 +54,7 @@ async def execute_drain(
     }
 
 
-@rabbit_handler_router.get("/get_meta/{key}", response_model=QueueMeta)
+@router.get("/get_meta/{key}", response_model=QueueMeta)
 async def get_meta_info(key: str):
     """
     Get meta info.

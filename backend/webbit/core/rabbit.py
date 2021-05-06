@@ -2,7 +2,6 @@ from contextlib import suppress
 
 import aioredis
 import aio_pika
-import time
 import json
 from datetime import datetime, timezone
 

@@ -24,6 +24,7 @@ services:
       - ./backend:/app/:cached
       - ./.docker/.ipython:/root/.ipython:cached
     environment:
+      DB_CONNECTION: sqlite://db.sqlite3
       PYTHONPATH: .
 
   frontend:
