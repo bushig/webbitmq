@@ -5,3 +5,4 @@ mypy==0.812
 black==21.5b0
 isort==5.8.0
 flake8==3.9.1
+wemake-python-styleguide==0.15.2
