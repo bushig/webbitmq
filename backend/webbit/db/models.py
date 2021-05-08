@@ -1,6 +1,6 @@
 from tortoise.models import Model
 from tortoise import fields, Tortoise
-from tortoise.contrib.pydantic import pydantic_model_creator
+from tortoise.contrib.pydantic import pydantic_model_creator, pydantic_queryset_creator
 
 
 class RabbitServer(Model):
@@ -19,4 +19,5 @@ class RabbitServer(Model):
 
 
 RabbitServerSchema = pydantic_model_creator(RabbitServer, name="RabbitServer")
+RabbitServerCreateSchema = pydantic_model_creator(RabbitServer, name="RabbitServerCreate", exclude=('id',"created_at", "modified_at"))
 RabbitServerPublicSchema = pydantic_model_creator(RabbitServer, name="RabbitServer", exclude=("password",))
