@@ -4,14 +4,17 @@ import styles from "./App.module.scss";
 
 import MainPage from "./views/MainPage";
 import Sidebar from "./components/Sidebar/Sidebar";
+import ServerList from "./components/ServersList/ServerList";
 
+
+const servers = [
+    {id: 1, name: "Tesr"},
+]
 
 const App: VFC = () => (
   <div className={styles.wrapper}>
     <Sidebar>
-      <>
-        Это сайдбар
-      </>
+        <ServerList servers={servers}/>
     </Sidebar>
     <div className={styles.content}>
       <Switch>
