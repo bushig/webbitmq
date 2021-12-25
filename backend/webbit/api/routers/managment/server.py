@@ -11,7 +11,7 @@ from starlette.status import HTTP_204_NO_CONTENT
 
 from webbit.core.schemas import RabbitData, QueueMeta
 
-from webbit.db.models import RabbitServerSchema, RabbitServer, RabbitServerCreateSchema
+from webbit.db.models import RabbitServerSchema, RabbitServer, RabbitServerCreateSchema, RabbitServerPublicSchema
 
 router = APIRouter()
 
@@ -22,10 +22,10 @@ async def create_server(server_info: RabbitServerCreateSchema):
     return {"id": result.id}
 
 
-@router.get("/", response_model=List[RabbitServerSchema])
+@router.get("/", response_model=List[RabbitServerPublicSchema])
 async def get_servers_list():
     results = RabbitServer.all()
-    return await RabbitServerSchema.from_queryset(results)
+    return await RabbitServerPublicSchema.from_queryset(results)
 
 
 #

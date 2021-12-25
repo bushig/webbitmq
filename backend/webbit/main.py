@@ -10,7 +10,7 @@ from webbit.core.config import DATABASE_URL
 from webbit.core.consts import MODELS_MODULE
 
 
-def get_application() -> FastAPI:
+def create_app() -> FastAPI:
     application = FastAPI(
         title=config.PROJECT_NAME, docs_url="/api/docs", openapi_url="/api"
     )
@@ -42,7 +42,8 @@ def get_application() -> FastAPI:
 
     return application
 
-app = get_application()
+
+app = create_app()
 
 if __name__ == "__main__":
     uvicorn.run("main:app", host="0.0.0.0", reload=True, port=8888, ws="websockets")

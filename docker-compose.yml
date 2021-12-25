@@ -21,7 +21,7 @@ services:
       dockerfile: Dockerfile
     command: python webbit/main.py
     volumes:
-      - ./backend:/app/:cached
+      - ./backend:/app/
       - ./.docker/.ipython:/root/.ipython:cached
     environment:
       DB_CONNECTION: sqlite://db.sqlite3

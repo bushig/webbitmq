@@ -1,5 +1,6 @@
 from tortoise.models import Model
 from tortoise import fields, Tortoise
+from tortoise.validators import MaxValueValidator, MinValueValidator
 from tortoise.contrib.pydantic import pydantic_model_creator, pydantic_queryset_creator
 
 
@@ -8,8 +9,8 @@ class RabbitServer(Model):
     name = fields.CharField(max_length=125)
     host = fields.CharField(max_length=255)
     password = fields.CharField(max_length=255)  # TODO: Think about encrypting secure data (SQLCipher?)
-    port = fields.IntField()
-    vhost = fields.CharField(max_length=255, null=True)
+    port = fields.IntField(validators=[MinValueValidator(1), MaxValueValidator(65535)])
+    vhost = fields.CharField(max_length=255, null=True, default=None)
 
     created_at = fields.DatetimeField(auto_now_add=True)
     modified_at = fields.DatetimeField(auto_now=True)
@@ -20,4 +21,4 @@ class RabbitServer(Model):
 
 RabbitServerSchema = pydantic_model_creator(RabbitServer, name="RabbitServer")
 RabbitServerCreateSchema = pydantic_model_creator(RabbitServer, name="RabbitServerCreate", exclude=('id',"created_at", "modified_at"))
-RabbitServerPublicSchema = pydantic_model_creator(RabbitServer, name="RabbitServer", exclude=("password",))
+RabbitServerPublicSchema = pydantic_model_creator(RabbitServer, name="RabbitServerPublic", exclude=("password",))
