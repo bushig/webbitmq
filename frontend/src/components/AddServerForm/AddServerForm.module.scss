@@ -1,0 +1,26 @@
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  margin: 10px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 400px;
+  border: 2px solid #000;
+}
+
+.header {
+  display: flex;
+  //flex-direction: ;
+}
+
+.form {
+  display: flex;
+  margin: 20px;
+}
+.actions {
+  display: flex;
+  padding: 20px;
+  align-self: flex-end;
+}

@@ -1,6 +1,6 @@
 import React, { FC, useState } from "react";
 
-import { useHistory } from "react-router";
+import { useNavigate } from "react-router";
 import { createQueque, QueueData } from "../../utils/api";
 
 
@@ -12,7 +12,7 @@ const fastRabbitAddressOptions = [
 ];
 // TODO: finish component
 const RabbitForm: FC = () => {
-  const history = useHistory();
+  const navigate = useNavigate();
 
   const [error, setError] = useState<string>("");
   const [isLoading, setLoading] = useState<boolean>(false);
