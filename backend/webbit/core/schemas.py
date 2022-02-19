@@ -1,12 +1,11 @@
-from pydantic import BaseModel
-import typing as t
+from pydantic import BaseModel, Field
+from typing import Optional
 
-
-class RabbitData(BaseModel):
-    rabbit_env: str
+class RabbitQueueCreateSchema(BaseModel):
+    rabbit_server_id: int
     exchange_name: str
-    routing_key: t.Optional[str] = "*"
-    ttl: int
+    routing_key: Optional[str] = "*"
+    ttl_minutes: int = Field(description='time to live in minutes')
 
 
 class QueueMeta(BaseModel):

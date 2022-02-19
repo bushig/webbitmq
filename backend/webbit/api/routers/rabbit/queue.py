@@ -6,61 +6,55 @@ from fastapi import APIRouter, BackgroundTasks, HTTPException
 from datetime import datetime, timedelta, timezone
 
 from webbit.core.rabbit import execute_drain_from_rabbit
-from webbit.core.schemas import RabbitData, QueueMeta
+from webbit.core.schemas import QueueMeta, RabbitQueueCreateSchema
 
-from webbit.core.config import RABBITS_MANAGE_URLS
+from webbit.core.config import RABBITS_MANAGE_URLS, REDIS_URL
+from webbit.db.models import RabbitQueue, RabbitServer
 
 router = APIRouter()
 
-
+# TODO: decide on pagination and make it. for now it get all at once
+# TODO: write tests
 @router.get("/{queue_id}/messages")
-async def messages(queue_id: str):
-    redis = await aioredis.create_redis_pool(
-        'redis://redis', encoding="utf-8")
-    res = await redis.lrange(queue_id, 0, -1)
+async def get_messages(queue_id: str, page: int = 1, page_size: int = 50):
+    # start = (page-1) * page_size
+    redis = await aioredis.from_url(
+        REDIS_URL, encoding="utf-8")
+    res = await redis.lrange(queue_id, start=0, end=-1)
     return [json.loads(msg) for msg in res]
 
 
-@router.post("/execute_drain")
-async def execute_drain(
-        rabbit_data: RabbitData,
+@router.post("/")
+async def create_queue(
+        data: RabbitQueueCreateSchema,
         background_tasks: BackgroundTasks,
 ):
     """
-    Executes drain process.
+    Creates new queue and starts consumption
     """
-    key = str(uuid.uuid4())
-    data = rabbit_data.dict()
-    redis = await aioredis.create_redis_pool(
-        'redis://redis', encoding="utf-8")
+    queue_uuid = uuid.uuid4()
     now = datetime.now(tz=timezone.utc)
-    to = now + timedelta(minutes=data["ttl"])
-    meta = {
-        "ttl": data["ttl"],
-        "routing_key": data["routing_key"],
-        "exchange_name": data["exchange_name"],
-        "rabbit_host": RABBITS_MANAGE_URLS.get(data["rabbit_env"]),
-        "since": now.isoformat(),
-        "to": to.isoformat(),
+    expires_at = now + timedelta(minutes=data.ttl_minutes)
+    rabbit_server = await RabbitServer.get(id=data.rabbit_server_id)
+    queue = await RabbitQueue.create(uuid=queue_uuid, rabbit_server_id=rabbit_server.id, starts_at=now, expires_at=expires_at, routing_key=data.routing_key, exchange_name=data.exchange_name)
+
+    task_kwargs = {
+        "uuid": queue_uuid,
+
     }
-    await redis.set(f"{key}-meta", json.dumps(meta, ensure_ascii=False))
     background_tasks.add_task(
         execute_drain_from_rabbit,
         **data,
         key=key
     )
     return {
-        "key": key
+        "uuid": queue_uuid
     }
 
-
-@router.get("/get_meta/{key}", response_model=QueueMeta)
-async def get_meta_info(key: str):
+@router.get("/{queue_id}", response_model=QueueMeta)
+async def get_queue_meta_data(queue_id: str):
     """
-    Get meta info.
+    Get meta info of rabbitmq queue
     """
-    redis = await aioredis.create_redis_pool('redis://redis', encoding="utf-8")
-    result: str = await redis.get(f"{key}-meta")
-    if result:
-        return json.loads(result)
-    raise HTTPException(status_code=404, detail="Meta Not Found")
+    rabbit_queue = await RabbitQueue.get(uuid=queue_id)
+    return rabbit_queue

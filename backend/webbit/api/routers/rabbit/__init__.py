@@ -1,7 +1,7 @@
 from fastapi import APIRouter
 
-from webbit.api.routers.rabbit import queue
+from webbit.api.routers.rabbit.queue import router as queue_router
 
 router = APIRouter()
-router.include_router(queue.router, tags=["executor"], prefix="/queues")
+router.include_router(queue_router, tags=["executor"], prefix="/queues")
 

@@ -1,37 +1,34 @@
-import asyncio
-
+import pytest
 from fastapi.testclient import TestClient
 
 from webbit.db.models import RabbitServer
 
+# TODO: доделать тесты с параметрайзом
 
-def test_create_server_saved_to_db(client: TestClient, event_loop: asyncio.AbstractEventLoop):  # nosec
-    response = client.post("/api/management/servers",
+@pytest.mark.anyio
+# @pytest.mark.parametrize("test_input,expected", [("3+5", 8), ("2+4", 6), ("6*9", 42)])
+async def test_create_server_api(client: TestClient):  # nosec
+    response = client.post("/api/management/servers/",
                            json={
                                "host": "test.com",
                                "name": "server_name",
-                               "password": "pass123"
+                               "password": "pass123",
+                               "port": 1041
                            })
     assert response.status_code == 200
     data = response.json()
     assert "id" in data
-    server_id = data["id"]
 
-    async def get_server_by_db():
-        server = await RabbitServer.get(id=server_id)
-        return server
-
-    server_obj = event_loop.run_until_complete(get_server_by_db())
-    assert server_obj.id == server_id
 
 # TODO: pytest async test + make fixtures for common stuff  + use parametrize here
-def test_get_server_list_no_secret_fields(client: TestClient, event_loop: asyncio.AbstractEventLoop):  # nosec
+@pytest.mark.anyio
+async def test_get_server_list_no_secret_fields(client: TestClient):  # nosec
 
     async def create_server_in_db():
         server = await RabbitServer.create(name="test server", host="localhost", password="pass1word", port=24115)
         return server
 
-    event_loop.run_until_complete(create_server_in_db())
+    create_server_in_db()
 
 
     response = client.get("/api/management/servers")

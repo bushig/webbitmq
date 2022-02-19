@@ -9,9 +9,7 @@ from datetime import datetime, timedelta, timezone
 
 from starlette.status import HTTP_204_NO_CONTENT
 
-from webbit.core.schemas import RabbitData, QueueMeta
-
-from webbit.db.models import RabbitServerSchema, RabbitServer, RabbitServerCreateSchema, RabbitServerPublicSchema
+from webbit.db.models import RabbitServerSchema, RabbitServer, RabbitServerCreateSchema, RabbitServerReadSchema
 
 router = APIRouter()
 
@@ -22,13 +20,12 @@ async def create_server(server_info: RabbitServerCreateSchema):
     return {"id": result.id}
 
 
-@router.get("/", response_model=List[RabbitServerPublicSchema])
+@router.get("/", response_model=List[RabbitServerReadSchema])
 async def get_servers_list():
     results = RabbitServer.all()
-    return await RabbitServerPublicSchema.from_queryset(results)
+    return await RabbitServerReadSchema.from_queryset(results)
 
 
-#
 @router.delete("/{server_id}", response_model=None, status_code=HTTP_204_NO_CONTENT)
 async def delete_server(server_id: int):
     server = await RabbitServer.get(id=server_id)

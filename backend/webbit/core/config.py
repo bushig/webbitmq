@@ -22,6 +22,8 @@ ALLOWED_HOSTS: List[str] = config(
     default="",
 )
 
+REDIS_URL: str = config("REDIS_URL", default="redis://redis")
+
 RABBITS_URLS = {
 }
 
