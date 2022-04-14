@@ -2,37 +2,47 @@ import * as React from 'react';
 import {styled, createTheme, ThemeProvider} from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import Box from '@mui/material/Box';
-import Toolbar from '@mui/material/Toolbar';
-import ListItemIcon from "@mui/material/ListItemIcon";
-import DashboardIcon from "@mui/icons-material/Dashboard";
 import ListItemText from "@mui/material/ListItemText";
 import ListItem from "@mui/material/ListItem";
-import {Button, Container} from "@mui/material";
+import {Button, Container, MenuList} from "@mui/material";
 import AddCircleIcon from '@mui/icons-material/AddCircle';
-import {useState} from "react";
+import {useEffect, useState} from "react";
+import {observer} from "mobx-react";
 import Sidebar from "./components/Sidebar/Sidebar";
 import AddServerForm from "./components/AddServerForm/AddServerForm";
+import {useStores} from "./hooks";
 
 const mdTheme = createTheme();
 
-function DashboardContent() {
+function App() {
     const [isModalOpen, setIsModalOpen] = useState<boolean>(false)
+
+    const {serversStore} = useStores()
+
+    useEffect(() => {
+        serversStore.fetchServersList()
+    }, [])
 
     return (
         <ThemeProvider theme={mdTheme}>
             <Box sx={{display: 'flex'}}>
                 <CssBaseline/>
                 <Sidebar>
-                    <>
+                    <MenuList dense>
                         {/* start sidebar*/}
-                        <ListItem button>
-                            <ListItemIcon>
-                                <DashboardIcon/>
-                            </ListItemIcon>
-                            <ListItemText primary="Servers list"/>
-                        </ListItem>
-                        <Button variant="contained" color="secondary" startIcon={<AddCircleIcon />} onClick={()=>{setIsModalOpen(true)}}>Add server</Button>
-                    </>
+                        {serversStore.servers.map((server) => {
+                            console.log("TESEET")
+                            return (
+                                <ListItem button key={server.id}>
+                                    <ListItemText primary={server.name}/>
+                                </ListItem>
+                            );
+                        })}
+
+                        <Button variant="contained" color="secondary" startIcon={<AddCircleIcon/>} onClick={() => {
+                            setIsModalOpen(true)
+                        }}>Add server</Button>
+                    </MenuList>
                     {/* end sidebar*/}
                 </Sidebar>
                 <Box
@@ -52,7 +62,9 @@ function DashboardContent() {
                     Some links
                     <br/>
                     Some changelogs
-                    {isModalOpen && <AddServerForm/> }
+                    {isModalOpen && <AddServerForm handleClose={() => {
+                        setIsModalOpen(false)
+                    }}/>}
 
 
                 </Box>
@@ -61,6 +73,4 @@ function DashboardContent() {
     );
 }
 
-export default function Dashboard() {
-    return <DashboardContent/>;
-}
+export default observer(App);

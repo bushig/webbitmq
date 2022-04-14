@@ -8,6 +8,7 @@ class RabbitServer(Model):
     id = fields.IntField(pk=True)
     name = fields.CharField(max_length=125)
     host = fields.CharField(max_length=255)
+    username = fields.CharField(max_length=255)  # TODO: Think about encrypting secure data (SQLCipher?)
     password = fields.CharField(max_length=255)  # TODO: Think about encrypting secure data (SQLCipher?)
     port = fields.IntField(validators=[MinValueValidator(1), MaxValueValidator(65535)])
     vhost = fields.CharField(max_length=255, null=True, default=None)
