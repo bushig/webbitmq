@@ -2,14 +2,17 @@ import {makeAutoObservable} from "mobx"
 import axios from "axios";
 import {ServerInfoType} from "../models/servers";
 
-export interface IServersStore {
-    servers: ServerInfoType[]
+export interface IServerStore {
+    activeServerId: number | null
+    activeServerInfo: ServerInfoType | null
 }
 
-class ServersStore implements IServersStore {
+class ServerStore implements IServerStore {
     private rootStore: unknown
 
-    servers = []
+    activeServerId = null
+
+    activeServerInfo = null
 
     // TODO: fix deps cycle
     constructor(rootStore: unknown) {
@@ -17,13 +20,14 @@ class ServersStore implements IServersStore {
         makeAutoObservable(this)
     }
 
-    fetchServersList = async (): Promise<void> => {
+    fetchServerMeta = async (id: number): Promise<void> => {
         try {
             const resp = await axios.get(
-                `/api/management/servers/`,
+                `/api/management/servers/${id}`,
             )
             if (resp.status === 200) {
-                this.servers = resp.data
+                this.activeServerInfo = resp.data
+                this.activeServerId = resp.data.id
             }
             // TODO: handle errors
         } catch (e) {
@@ -34,4 +38,4 @@ class ServersStore implements IServersStore {
 
 }
 
-export default ServersStore
+export default ServerStore

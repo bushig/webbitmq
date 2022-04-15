@@ -2,14 +2,14 @@ import React, {VFC} from "react";
 
 import styles from "./ServerList.module.scss";
 import ServerListElement from "./ServerListElement";
-import {ServerInfo} from "../../models/servers";
+import {ServerInfoType} from "../../models/servers";
 
 
 
 interface IServerListProps {
     // isCollapsed: boolean
     // onCollapse: () => void
-    servers: ServerInfo[]
+    servers: ServerInfoType[]
 }
 
 const ServerList: VFC<IServerListProps> = ({servers}) =>

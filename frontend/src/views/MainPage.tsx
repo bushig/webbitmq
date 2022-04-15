@@ -1,12 +1,15 @@
-import React, { VFC } from "react";
+import React, {VFC} from "react";
 
 // import RabbitForm from '../components/RabbitForm';
 
 const MainPage: VFC = () =>
-  (<>
-    <div>test</div>
-    {/*<RabbitForm />*/}
-  </>);
+    (<>
+        Some features
+        <br/>
+        Some links
+        <br/>
+        Some changelogs
+    </>);
 
 
 export default MainPage;

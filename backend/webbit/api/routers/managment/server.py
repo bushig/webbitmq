@@ -25,6 +25,11 @@ async def get_servers_list():
     results = RabbitServer.all()
     return await RabbitServerReadSchema.from_queryset(results)
 
+@router.get("/{server_id}", response_model=RabbitServerReadSchema)
+async def get_server_info(server_id: int):
+    results = await RabbitServer.get(id=server_id)
+    return await RabbitServerReadSchema.from_tortoise_orm(results)
+
 
 @router.delete("/{server_id}", response_model=None, status_code=HTTP_204_NO_CONTENT)
 async def delete_server(server_id: int):

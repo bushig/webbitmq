@@ -4,17 +4,19 @@ import CssBaseline from '@mui/material/CssBaseline';
 import Box from '@mui/material/Box';
 import ListItemText from "@mui/material/ListItemText";
 import ListItem from "@mui/material/ListItem";
-import {Button, Container, MenuList} from "@mui/material";
+import {Button, Container, List, MenuList} from "@mui/material";
 import AddCircleIcon from '@mui/icons-material/AddCircle';
-import {useEffect, useState} from "react";
+import {FC, useEffect, useState} from "react";
 import {observer} from "mobx-react";
+import {Outlet} from "react-router-dom";
 import Sidebar from "./components/Sidebar/Sidebar";
 import AddServerForm from "./components/AddServerForm/AddServerForm";
 import {useStores} from "./hooks";
+import ServerList from "./components/ServersList/ServerList";
 
 const mdTheme = createTheme();
 
-function App() {
+const App: FC = () => {
     const [isModalOpen, setIsModalOpen] = useState<boolean>(false)
 
     const {serversStore} = useStores()
@@ -28,23 +30,20 @@ function App() {
             <Box sx={{display: 'flex'}}>
                 <CssBaseline/>
                 <Sidebar>
-                    <MenuList dense>
+                    <List >
                         {/* start sidebar*/}
-                        {serversStore.servers.map((server) => {
-                            console.log("TESEET")
-                            return (
-                                <ListItem button key={server.id}>
-                                    <ListItemText primary={server.name}/>
-                                </ListItem>
-                            );
-                        })}
+                        <ServerList servers={serversStore.servers}/>
 
                         <Button variant="contained" color="secondary" startIcon={<AddCircleIcon/>} onClick={() => {
                             setIsModalOpen(true)
                         }}>Add server</Button>
-                    </MenuList>
+                    </List>
                     {/* end sidebar*/}
                 </Sidebar>
+                {/*TODO: move to sidebar?*/}
+                    {isModalOpen && <AddServerForm handleClose={() => {
+                        setIsModalOpen(false)
+                    }}/>}
                 <Box
                     component="main"
                     sx={{
@@ -57,20 +56,11 @@ function App() {
                         overflow: 'auto',
                     }}
                 >
-                    Some features
-                    <br/>
-                    Some links
-                    <br/>
-                    Some changelogs
-                    {isModalOpen && <AddServerForm handleClose={() => {
-                        setIsModalOpen(false)
-                    }}/>}
-
-
+                    <Outlet />
                 </Box>
             </Box>
         </ThemeProvider>
     );
-}
+};
 
 export default observer(App);
