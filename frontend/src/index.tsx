@@ -9,6 +9,7 @@ import {StoreProvider} from "./stores";
 import App from "./App";
 import RabbitServerView from "./views/RabbitServerView/RabbitServerView";
 import MainPage from "./views/MainPage";
+import QueueDetailView from "./views/QueueDetailView/QueueDetailView";
 
 configure({isolateGlobalState: true})
 const mobxStore = new RootStore()
@@ -20,6 +21,7 @@ ReactDOM.render(
                 <Route path="/" element={<App/>}>
                     <Route index element={<MainPage/>}/>
                     <Route path="server/:serverId" element={<RabbitServerView/>}/>
+                    <Route path="queue/:uuid" element={<QueueDetailView/>}/>
                 </Route>
 
             </Routes>

@@ -1,6 +1,6 @@
 from fastapi import FastAPI, WebSocket
 import uvicorn
-import aioredis
+from redis import asyncio as aioredis
 from tortoise.contrib.fastapi import register_tortoise
 
 from webbit.core import config
@@ -30,15 +30,24 @@ def create_app() -> FastAPI:
 
     @application.websocket("/ws/{queue_id}")
     async def websocket_endpoint(websocket: WebSocket, queue_id: str):
-        redis = await aioredis.create_redis_pool(
+        redis = await aioredis.from_url(
             'redis://redis', encoding="utf-8")
+        pubsub = redis.pubsub()
+        await pubsub.subscribe(queue_id)
         await websocket.accept()
-        while True:
-            res = await redis.subscribe(queue_id)
-            channel = res[0]
-            while await channel.wait_message():
-                msg = await channel.get_json()
-                await websocket.send_text(msg)
+
+        # TODO: restrict connection if queue is dead
+        # TODO: connection is not terminated properly on disconnect
+        # await websocket.send_text("connected")
+
+        async for message in pubsub.listen():
+            if message["type"] == "subscribe":
+                continue
+            # TODO: break connection on drain end
+            print("message", message)
+            text_data = message["data"].decode("utf-8")
+            await websocket.send_text(text_data)
+
 
     return application
 

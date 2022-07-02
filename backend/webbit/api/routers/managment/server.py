@@ -3,12 +3,13 @@ import uuid
 import json
 from typing import List
 
-import aioredis
+from redis import asyncio as aioredis
 from fastapi import APIRouter, BackgroundTasks, HTTPException, Response
 from datetime import datetime, timedelta, timezone
 
 from starlette.status import HTTP_204_NO_CONTENT
 
+from webbit.core.rabbit import connect_to_rabbit_server
 from webbit.db.models import RabbitServerSchema, RabbitServer, RabbitServerCreateSchema, RabbitServerReadSchema
 
 router = APIRouter()
@@ -18,6 +19,17 @@ router = APIRouter()
 async def create_server(server_info: RabbitServerCreateSchema):
     result = await RabbitServer.create(**server_info.dict(exclude_unset=True))
     return {"id": result.id}
+
+@router.post("/{server_id}/check_connection")
+async def check_connection_to_server(server_id: int):
+    """checks if there is connection to server"""
+    server_info = await RabbitServer.get(id=server_id)
+    try:
+        connection = await connect_to_rabbit_server(server_info)
+    except Exception as e:
+        return {"ok": False, "error": str(e)}
+    # result = await connection.channel()
+    return {"ok": True}
 
 
 @router.get("/", response_model=List[RabbitServerReadSchema])

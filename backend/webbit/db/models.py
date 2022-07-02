@@ -11,7 +11,7 @@ class RabbitServer(Model):
     username = fields.CharField(max_length=255)  # TODO: Think about encrypting secure data (SQLCipher?)
     password = fields.CharField(max_length=255)  # TODO: Think about encrypting secure data (SQLCipher?)
     port = fields.IntField(validators=[MinValueValidator(1), MaxValueValidator(65535)])
-    vhost = fields.CharField(max_length=255, null=True, default=None)
+    vhost = fields.CharField(max_length=255, null=True, default="/")
 
     created_at = fields.DatetimeField(auto_now_add=True)
     modified_at = fields.DatetimeField(auto_now=True)
@@ -21,9 +21,10 @@ class RabbitServer(Model):
     def __str__(self):
         return f"RabbitServer {self.name}"
 
+
 class RabbitQueue(Model):
     uuid = fields.UUIDField(pk=True)
-    messages_type = fields.CharField(max_length=5, default="json") # how we should parse messages
+    messages_type = fields.CharField(max_length=5, default="json")  # how we should parse messages
     routing_key = fields.CharField(max_length=80)  # TODO: should be list of exchanges and routing keys?
     exchange_name = fields.CharField(max_length=80)
     rabbit_server: fields.ForeignKeyRelation[RabbitServer] = fields.ForeignKeyField(
@@ -41,9 +42,10 @@ class RabbitQueue(Model):
 
 
 RabbitServerSchema = pydantic_model_creator(RabbitServer, name="RabbitServer")
-RabbitServerCreateSchema = pydantic_model_creator(RabbitServer, name="RabbitServerCreate", exclude=('id',"created_at", "modified_at"))
+RabbitServerCreateSchema = pydantic_model_creator(RabbitServer, name="RabbitServerCreate",
+                                                  exclude=('id', "created_at", "modified_at"))
 RabbitServerReadSchema = pydantic_model_creator(RabbitServer, name="RabbitServerRead", exclude=("password",))
 
-
 RabbitQueueSchema = pydantic_model_creator(RabbitQueue, name="RabbitQueue")
-RabbitQueueReadSchema = pydantic_model_creator(RabbitQueue, name="RabbitQueueCreate", include=("uuid", "exchange_name", "rabbit_server"))
+RabbitQueueReadSchema = pydantic_model_creator(RabbitQueue, name="RabbitQueueCreate",
+                                               include=("uuid", "exchange_name", "rabbit_server"))

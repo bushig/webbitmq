@@ -1,17 +1,20 @@
 import uuid
 
 import json
-import aioredis
+from typing import List
+
+from redis import asyncio as aioredis
 from fastapi import APIRouter, BackgroundTasks, HTTPException
 from datetime import datetime, timedelta, timezone
 
 from webbit.core.rabbit import execute_drain_from_rabbit
 from webbit.core.schemas import QueueMeta, RabbitQueueCreateSchema
 
-from webbit.core.config import RABBITS_MANAGE_URLS, REDIS_URL
-from webbit.db.models import RabbitQueue, RabbitServer
+from webbit.core.config import REDIS_URL
+from webbit.db.models import RabbitQueue, RabbitServer, RabbitQueueSchema
 
 router = APIRouter()
+
 
 # TODO: decide on pagination and make it. for now it get all at once
 # TODO: write tests
@@ -22,6 +25,23 @@ async def get_messages(queue_id: str, page: int = 1, page_size: int = 50):
         REDIS_URL, encoding="utf-8")
     res = await redis.lrange(queue_id, start=0, end=-1)
     return [json.loads(msg) for msg in res]
+
+
+# TODO: add pagination
+@router.get("/", response_model=List[RabbitQueueSchema])
+async def get_queues_list(
+        server_id: int,
+        only_active: bool = False
+):
+    """
+    Get list of available queues
+    """
+
+    return await RabbitQueueSchema.from_queryset(
+        RabbitQueue.filter(
+            rabbit_server__id=server_id
+        )
+    )
 
 
 @router.post("/")
@@ -36,22 +56,28 @@ async def create_queue(
     now = datetime.now(tz=timezone.utc)
     expires_at = now + timedelta(minutes=data.ttl_minutes)
     rabbit_server = await RabbitServer.get(id=data.rabbit_server_id)
-    queue = await RabbitQueue.create(uuid=queue_uuid, rabbit_server_id=rabbit_server.id, starts_at=now, expires_at=expires_at, routing_key=data.routing_key, exchange_name=data.exchange_name)
+    queue = await RabbitQueue.create(
+        uuid=queue_uuid, rabbit_server_id=rabbit_server.id, starts_at=now,
+        expires_at=expires_at, routing_key=data.routing_key,
+        exchange_name=data.exchange_name
+    )
 
     task_kwargs = {
-        "uuid": queue_uuid,
+        "queue_uuid": str(queue_uuid),
+        "ttl_minutes": data.ttl_minutes
 
     }
+    # TODO: before creating queue, check if exchange exists and connectible
     background_tasks.add_task(
         execute_drain_from_rabbit,
-        **data,
-        key=key
+        **task_kwargs
     )
     return {
         "uuid": queue_uuid
     }
 
-@router.get("/{queue_id}", response_model=QueueMeta)
+
+@router.get("/{queue_id}", response_model=RabbitQueueSchema)
 async def get_queue_meta_data(queue_id: str):
     """
     Get meta info of rabbitmq queue
