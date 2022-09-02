@@ -1,6 +1,6 @@
 import React, {VFC} from "react";
 
-import {Button} from "@mui/material";
+import {Button, ListItem, Link, ListItemText} from "@mui/material";
 import {useNavigate} from "react-router-dom";
 import {QueueInfoType} from "../../models/queues";
 
@@ -12,16 +12,25 @@ interface IQueueListElementProps {
 const QueueListElement: VFC<IQueueListElementProps> = ({item}) => {
     const to = `/queue/${item.uuid}`
     const navigate = useNavigate()
-    return <div>
-        Uuid: {item.uuid}
-        <Button
-            onClick={() => {
+    return <ListItem
+        onClick={
+            () => {
                 navigate(to)
-            }}
-        >
-            Открыть
-        </Button>
-    </div>
+            }
+        }
+        button
+        // component={Link}
+        // to={to}
+    >
+        <ListItemText
+            primary={`UUID: ${item.uuid}`}
+            secondary={
+                <>
+                    some info
+                </>
+            }
+        />
+    </ListItem>
 };
 
 

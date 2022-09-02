@@ -1,6 +1,6 @@
 import React, {useState, VFC} from "react";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
-import {Button} from "@mui/material";
+import {Button, List} from "@mui/material";
 import QueueListElement from "./QueueListElement";
 import {QueueInfoType} from "../../models/queues";
 import AddQueueForm from "../AddQueueForm/RabbitForm";
@@ -22,7 +22,9 @@ const QueueList: VFC<IServerListProps> = ({queues}) => {
             {isModalOpen && <AddQueueForm handleClose={() => {
                 setIsModalOpen(false)
             }}/>}
-            {queues.map((queue) => <QueueListElement key={queue.uuid} item={queue}/>)}
+            <List>
+                {queues.map((queue) => <QueueListElement key={queue.uuid} item={queue}/>)}
+            </List>
         </div>;
     }
 ;

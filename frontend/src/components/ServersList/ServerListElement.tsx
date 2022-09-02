@@ -32,7 +32,7 @@ const ServerListElement: VFC<IServerListElementProps> = ({item}) => {
         <ListItemButton selected={!!match} onClick={() => {
                 navigate(to)
             }}>
-            <ListItemText
+            <ListItemText secondary={`amqp://${item.username}:***@${item.host}:${item.port}${item.vhost}`}
             > {item.name}</ListItemText>
         </ListItemButton>
 
