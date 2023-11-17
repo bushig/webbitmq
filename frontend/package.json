@@ -8,16 +8,20 @@
     "@emotion/styled": "^11.6.0",
     "@mui/icons-material": "^5.3.0",
     "@mui/material": "^5.3.0",
+    "@rjsf/core": "^5.9.0",
+    "@rjsf/mui": "^5.9.0",
+    "@rjsf/utils": "^5.9.0",
+    "@rjsf/validator-ajv8": "^5.9.0",
     "axios": "0.21.1",
     "mobx": "^6.4.1",
     "mobx-react": "^7.3.0",
     "react": "17.0.2",
+    "react-countdown": "2.3.2",
     "react-dom": "17.0.2",
     "react-json-view": "1.21.3",
     "react-router": "6.3.0",
     "react-router-dom": "6.3.0",
-    "react-scripts": "5.0.0",
-    "react-countdown": "2.3.2"
+    "react-scripts": "5.0.0"
   },
   "scripts": {
     "start": "react-scripts start",
@@ -40,7 +44,6 @@
     ]
   },
   "devDependencies": {
-    "@blueprintjs/eslint-plugin": "^0.3.2",
     "@testing-library/jest-dom": "5.11.9",
     "@testing-library/react": "11.2.5",
     "@testing-library/user-event": "12.8.3",

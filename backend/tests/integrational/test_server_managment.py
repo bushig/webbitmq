@@ -1,30 +1,37 @@
 import pytest
 from fastapi.testclient import TestClient
 
+from tests.client import AsyncTestClient
 from tests.utils.db import create_server_in_db
 from webbit.db.models import RabbitServer
 
-# TODO: complete tests with parametrize
+# TODO: доделать тесты с параметрайзом
 
 @pytest.mark.anyio
-# @pytest.mark.parametrize("test_input,expected", [("3+5", 8), ("2+4", 6), ("6*9", 42)])
-async def test_sending_messages_work(client):  # nosec
-    # creating server TODO: move somewhere else as fixture
-    response = await client.post("/api/management/servers/",
-                           json={
-                               "host": "rabbit",
+async def test_create_server_api(client: AsyncTestClient, valid_server):  # nosec
+    """
+    Server is created and can be connected to
+    """
+    server_id = valid_server["id"]
+    # TODO: move to client
+    response = await client.check_server_connection(server_id)
+
+@pytest.mark.anyio
+async def test_invalid_server_fails_to_connect(client: AsyncTestClient):  # nosec
+    """
+    Server is created and can be connected to
+    """
+    response = await client.create_server({
+                               "host": "nonhost", # nonexistent host
                                "name": "server_name",
                                "username": "guest",
                                "password": "guest",
                                "port": 5672
                            })
-    assert response.status_code == 200
+    server_id = response["id"]
+    response = await client.check_server_connection(server_id)
     data = response.json()
-    server_id = data["id"]
-
-    # creating queue TODO: move somewhere else as fixture
-
-
+    assert "id" in data
 
 
 # TODO: pytest async test + make fixtures for common stuff  + use parametrize here

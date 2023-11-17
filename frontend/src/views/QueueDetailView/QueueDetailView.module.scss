@@ -18,27 +18,22 @@
   margin-right: 200px;
 }
 
+.queueBindingInfo {
+  display: flex;
+  flex-direction: column;
+}
+.queueBindingDetail {
+  display: flex;
+  flex-direction: column;
+  font-size: 12px;
+}
+
 .queue {
   text-align: center;
 }
 
 .queue_header_wrapper {
-  flex: 1;
-  display: flex;
-  flex-direction: row;
-  text-align: center;
-  justify-content: center;
-}
-
-.timer {
-  align-items: flex-end;;
-  display: flex;
-  flex-direction: row;
-  text-align: center;
-  background-color: #D9D8D4;
-  border-radius: 10px;
-  padding: 5px;
-  margin-left: 10px
+  background-color: black;
 }
 
 

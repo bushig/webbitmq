@@ -20,6 +20,12 @@ class ServerStore implements IServerStore {
         makeAutoObservable(this)
     }
 
+    setActiveServerId = async (id: number): Promise<void> => {
+    this.activeServerId = id
+
+    }
+
+
     fetchServerMeta = async (id: number): Promise<void> => {
         try {
             const resp = await axios.get(

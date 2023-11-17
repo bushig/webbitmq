@@ -4,10 +4,7 @@ import json
 from typing import List
 
 from redis import asyncio as aioredis
-from fastapi import APIRouter, BackgroundTasks, HTTPException, Response
-from datetime import datetime, timedelta, timezone
-
-from starlette.status import HTTP_204_NO_CONTENT
+from fastapi import APIRouter, Response, status
 
 from webbit.core.rabbit import connect_to_rabbit_server
 from webbit.db.models import RabbitServerSchema, RabbitServer, RabbitServerCreateSchema, RabbitServerReadSchema
@@ -21,12 +18,13 @@ async def create_server(server_info: RabbitServerCreateSchema):
     return {"id": result.id}
 
 @router.post("/{server_id}/check_connection")
-async def check_connection_to_server(server_id: int):
+async def check_connection_to_server(server_id: int, response: Response):
     """checks if there is connection to server"""
     server_info = await RabbitServer.get(id=server_id)
     try:
         connection = await connect_to_rabbit_server(server_info)
     except Exception as e:
+        response.status_code = status.HTTP_424_FAILED_DEPENDENCY
         return {"ok": False, "error": str(e)}
     # result = await connection.channel()
     return {"ok": True}
@@ -43,8 +41,8 @@ async def get_server_info(server_id: int):
     return await RabbitServerReadSchema.from_tortoise_orm(results)
 
 
-@router.delete("/{server_id}", response_model=None, status_code=HTTP_204_NO_CONTENT)
+@router.delete("/{server_id}", response_model=None, status_code=status.HTTP_204_NO_CONTENT)
 async def delete_server(server_id: int):
     server = await RabbitServer.get(id=server_id)
     await server.delete()
-    return Response(status_code=HTTP_204_NO_CONTENT)
+    return Response(status_code=status.HTTP_204_NO_CONTENT)

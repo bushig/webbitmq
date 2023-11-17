@@ -9,12 +9,20 @@ import AddCircleIcon from '@mui/icons-material/AddCircle';
 import {FC, useEffect, useState} from "react";
 import {observer} from "mobx-react";
 import {Outlet} from "react-router-dom";
+import {ruRU} from '@mui/material/locale';
 import Sidebar from "./components/Sidebar/Sidebar";
 import AddServerForm from "./components/AddServerForm/AddServerForm";
 import {useStores} from "./hooks";
 import ServerList from "./components/ServersList/ServerList";
 
-const mdTheme = createTheme();
+
+const mdTheme = createTheme({
+        palette: {
+            mode: 'dark',
+        },
+    },
+    ruRU
+);
 
 const App: FC = () => {
     const [isModalOpen, setIsModalOpen] = useState<boolean>(false)
@@ -30,20 +38,20 @@ const App: FC = () => {
             <Box sx={{display: 'flex'}}>
                 <CssBaseline/>
                 <Sidebar>
-                    <List >
+                    <List>
                         {/* start sidebar*/}
                         <ServerList servers={serversStore.servers}/>
 
                         <Button variant="contained" color="secondary" startIcon={<AddCircleIcon/>} onClick={() => {
                             setIsModalOpen(true)
-                        }}>Add server</Button>
+                        }}>Добавить сервер</Button>
                     </List>
                     {/* end sidebar*/}
                 </Sidebar>
                 {/*TODO: move to sidebar?*/}
-                    {isModalOpen && <AddServerForm handleClose={() => {
-                        setIsModalOpen(false)
-                    }}/>}
+                {isModalOpen && <AddServerForm handleClose={() => {
+                    setIsModalOpen(false)
+                }}/>}
                 <Box
                     component="main"
                     sx={{
@@ -56,7 +64,7 @@ const App: FC = () => {
                         overflow: 'auto',
                     }}
                 >
-                    <Outlet />
+                    <Outlet/>
                 </Box>
             </Box>
         </ThemeProvider>

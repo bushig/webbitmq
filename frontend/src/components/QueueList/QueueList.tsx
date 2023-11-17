@@ -17,7 +17,7 @@ const QueueList: VFC<IServerListProps> = ({queues}) => {
             <Button variant="contained" color="secondary" startIcon={<AddCircleIcon/>} onClick={() => {
                 setIsModalOpen(true)
             }}>
-                Add queue
+                Создать очередь
             </Button>
             {isModalOpen && <AddQueueForm handleClose={() => {
                 setIsModalOpen(false)

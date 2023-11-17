@@ -9,6 +9,7 @@ services:
     depends_on:
       - backend
       - frontend
+  # TODO: remove nginx
 
   redis:
     image: redis:6.2.2-alpine
@@ -26,6 +27,7 @@ services:
     environment:
       DB_CONNECTION: sqlite://db.sqlite3
       PYTHONPATH: .
+      PYTHONASYNCIODEBUG: 1
 
   frontend:
     build:
@@ -46,3 +48,5 @@ services:
     ports:
     - 15672:15672
     - 5672:5672
+    logging:
+      driver: none

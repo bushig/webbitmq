@@ -20,11 +20,6 @@ const RabbitServerView: VFC = () => {
 
     return (
         <div>
-            Detail server page
-
-
-            serverStore: {serverStore.activeServerId}
-
             <QueueList queues={queuesStore.queues} />
         </div>
     )

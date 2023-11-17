@@ -21,7 +21,7 @@ ReactDOM.render(
                 <Route path="/" element={<App/>}>
                     <Route index element={<MainPage/>}/>
                     <Route path="server/:serverId" element={<RabbitServerView/>}/>
-                    <Route path="queue/:uuid" element={<QueueDetailView/>}/>
+                    <Route path="server/:serverId/queue/:uuid" element={<QueueDetailView/>}/>
                 </Route>
 
             </Routes>

@@ -2,113 +2,118 @@ import React, {FC, useState} from "react";
 
 import axios from "axios";
 import {observer} from "mobx-react";
-import {Box, Button, Grid, Modal, TextField, Toolbar, Typography} from "@mui/material";
-import {Save} from "@mui/icons-material";
+import {Box, Modal, Toolbar, Typography} from "@mui/material";
+import validator from "@rjsf/validator-ajv8";
+import Form from "@rjsf/mui";
+import {ErrorSchema, RJSFSchema} from "@rjsf/utils";
 import {useStores} from "../../hooks";
 import styles from "../AddServerForm/AddServerForm.module.scss";
-import {MessageType} from "../../models/queues";
 
 type AddQueueFormProps = {
     handleClose: () => void
 }
 
+// taken from RabbitServerCreate backend openapi, dont edit
+const schema: RJSFSchema = {
+    "title": "RabbitQueueCreateSchema",
+    "required": [
+        "rabbit_server_id",
+        "ttl_minutes"
+    ],
+    "type": "object",
+    "properties": {
+        "rabbit_server_id": {
+            "title": "Rabbit Server Id",
+            "type": "integer"
+        },
+        "bindings": {
+            "title": "Bindings",
+            "minItems": 1,
+            "type": "array",
+            "items": {
+                "title": "RabbitBindings",
+                "required": [
+                    "exchange",
+                    "routing_key"
+                ],
+                "type": "object",
+                "properties": {
+                    "exchange": {
+                        "title": "Exchange",
+                        "type": "string"
+                    },
+                    "routing_key": {
+                        "title": "Routing Key",
+                        "type": "string"
+                    }
+                },
+                "description": "Bindings of queue to exchange"
+            },
+            "description": "Bindings of queue to exchange",
+            "default": []
+        },
+        "ttl_minutes": {
+            "title": "Ttl Minutes",
+            "type": "integer",
+            "description": "Время жизни очереди в минутах"
+        }
+    }
+}
+
+const uiSchema: RJSFSchema = {
+    rabbit_server_id: {"ui:widget": "hidden"},
+    bindings: {
+        'ui:options': {
+            orderable: false,
+            label: false,
+        },
+    }
+};
+
 const AddQueueForm: FC<AddQueueFormProps> = (props) => {
     const {serverStore} = useStores()
     const {handleClose} = props
 
-    const [error, setError] = useState<string>("");
-    const [isLoading, setLoading] = useState<boolean>(false);
+    const [extraErrors, setExtraErrors] = useState({});
 
-    const [exchangeName, setExchangeName] = useState<string>("");
-    const [queueLifetimeMinutes, setQueueLifetimeMinutes] = useState<number>(1);
-    const [routingKey, setRoutingKey] = useState<string>("");
-
-
-    const handleExchangeNameChange = (e) => {
-        console.log("qweqwe", e)
-        setExchangeName(e.target.value);
-    };
-
-    const handleRoutingKeyChange = (e) => {
-        setRoutingKey(e.target.value);
-    };
-    const handleQueueLifetimeMinutesChange = (e) => {
-        setQueueLifetimeMinutes(e.target.value);
-    };
-
-    const onSubmit = async () => {
-        setLoading(true);
+    const submitHandler = async (data) => {
         try {
-            const data = {
-                rabbit_server_id: serverStore.activeServerId,
-                exchange_name: exchangeName,
-                routing_key: routingKey || "*",
-                ttl_minutes: queueLifetimeMinutes
-            };
             const response = await axios.post(
                 `/api/rabbit/queues/`,
-                data
+                data.formData
             );
-            window.open(`/queue/${response.data.uuid}`);
-            setLoading(false);
+            window.open(`/server/${data.formData.rabbit_server_id}/queue/${response.data.uuid}`);
         } catch (err) {
-            console.log(err);
-            setError(err.toString());
-            setLoading(false);
+            // case when exchanges are not available
+            setExtraErrors({
+                bindings: {
+                    __errors: [err.response.data.detail],
+                },
+            })
         }
     };
 
     return (
-        <form>
-            <Modal open onClose={handleClose}>
-                <Box className={styles.wrapper} bgcolor='background.paper' p="4">
-                    <Toolbar className={styles.header}>
-                        <Typography variant="h6" color="inherit">
-                            New queue
-                        </Typography>
-                    </Toolbar>
-                    <div className={styles.form}>
-                        <Grid container spacing={3}>
-                            <Grid item xs={12}>
-                                <TextField
-                                    label="exchange name"
-                                    value={exchangeName}
-                                    onChange={handleExchangeNameChange}
-                                />
-                            </Grid>
-                            <Grid item xs={6}>
-                                <TextField
-                                    label="routing key"
-                                    required
-                                    value={routingKey}
-                                    onChange={handleRoutingKeyChange}
-                                />
-                            </Grid>
-                            <Grid item xs={6}>
-                                <TextField
-                                    label="ttl minutes"
-                                    type="number"
-                                    defaultValue="5672"
-                                    value={queueLifetimeMinutes}
-                                    onChange={handleQueueLifetimeMinutesChange}
-                                />
-                            </Grid>
-                        </Grid>
-                    </div>
-                    <div className={styles.actions}>
-                        <Button
-                            variant="contained"
-                            color="secondary"
-                            startIcon={<Save/>}
-                            // className={classes.button}
-                            onClick={onSubmit}
-                        >
-                            Save
-                        </Button>
-                    </div>
-                </Box>
-            </Modal>
-        </form>
+        <Modal open onClose={handleClose}>
+            <Box className={styles.wrapper} bgcolor='background.paper' p="4">
+                <Toolbar className={styles.header}>
+                    <Typography variant="h6" color="inherit">
+                        Новая очередь
+                    </Typography>
+                </Toolbar>
+                <div className={styles.form}>
+                    <Form
+                        schema={schema}
+                        validator={validator}
+                        onSubmit={submitHandler}
+                        uiSchema={uiSchema}
+                        formData={{rabbit_server_id: serverStore.activeServerId}}
+                        // @ts-ignore
+                        extraErrors={extraErrors}
+                    />
+                </div>
+            </Box>
+        </Modal>
     );
 };
 

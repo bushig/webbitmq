@@ -1,10 +1,18 @@
 const rules = {
-  "spaced-comment": "off",
-  "react/prop-types": "off"
+  // "spaced-comment": "off",
+  // "react/prop-types": "off",
+  // "@typescript-eslint/no-explicit-any": "off", // disabled because it uses eslint 8
+  // "@typescript-eslint/ban-ts-ignore": "off",
+
+
 };
 
 module.exports = {
-  extends: ["airbnb-typescript", "plugin:@typescript-eslint/recommended", "prettier"],
+  extends: [
+    //   "airbnb-typescript",
+    // "plugin:@typescript-eslint/recommended",
+    // "prettier"
+  ],
   rules,
   env: {
     browser: true,
@@ -13,9 +21,6 @@ module.exports = {
     jest: true,
     es6: true
   },
-  plugins: [
-    "@blueprintjs"
-  ],
   parserOptions: {
     project: "./tsconfig.json"
   }

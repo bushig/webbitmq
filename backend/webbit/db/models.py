@@ -1,7 +1,11 @@
+from typing import List
+
 from tortoise.models import Model
 from tortoise import fields, Tortoise
 from tortoise.validators import MaxValueValidator, MinValueValidator
 from tortoise.contrib.pydantic import pydantic_model_creator, pydantic_queryset_creator
+
+from webbit.core.consts import MODELS_MODULE
 
 
 class RabbitServer(Model):
@@ -22,11 +26,11 @@ class RabbitServer(Model):
         return f"RabbitServer {self.name}"
 
 
+
 class RabbitQueue(Model):
     uuid = fields.UUIDField(pk=True)
     messages_type = fields.CharField(max_length=5, default="json")  # how we should parse messages
-    routing_key = fields.CharField(max_length=80)  # TODO: should be list of exchanges and routing keys?
-    exchange_name = fields.CharField(max_length=80)
+
     rabbit_server: fields.ForeignKeyRelation[RabbitServer] = fields.ForeignKeyField(
         "models.RabbitServer",
         related_name="queues"
@@ -35,17 +39,50 @@ class RabbitQueue(Model):
     starts_at = fields.DatetimeField()
     expires_at = fields.DatetimeField()
 
+    bindings: fields.ReverseRelation["QueueBindings"]
+
     # modified_at = fields.DatetimeField(auto_now=True)
+
+
+    def base_rabbit_admin_url(self) -> str:
+        return f"http://{self.rabbit_server.host}:15672/#"
+
+    def queue_name(self) -> str:
+        """Returns queue name for RabbitMQ"""
+        return f"webbit_{self.uuid}"
+
+    def rabbit_server_id(self) -> int:
+        """Returns queue name for RabbitMQ"""
+        return self.rabbit_server__id
+
+    # class PydanticMeta:
+    #     computed = ["hostname"]
+
 
     def __str__(self):
         return f"RabbitQueue {self.uuid}"
 
+class QueueBindings(Model):
+    """Bindings of queue to exchange"""
+    queue: fields.ForeignKeyRelation[RabbitQueue] = fields.ForeignKeyField(
+        "models.RabbitQueue",
+        related_name="bindings"
+    )
+    routing_key = fields.CharField(max_length=80)
+    exchange_name = fields.CharField(max_length=80)
 
-RabbitServerSchema = pydantic_model_creator(RabbitServer, name="RabbitServer")
+    class PydanticMeta:
+        exclude = ["id"]
+
+Tortoise.init_models([MODELS_MODULE], "models")
+
+
+RabbitServerSchema = pydantic_model_creator(RabbitServer, name="RabbitServer", exclude=("queues",))
 RabbitServerCreateSchema = pydantic_model_creator(RabbitServer, name="RabbitServerCreate",
-                                                  exclude=('id', "created_at", "modified_at"))
-RabbitServerReadSchema = pydantic_model_creator(RabbitServer, name="RabbitServerRead", exclude=("password",))
+                                                  exclude=('id', "created_at", "modified_at", "queues",))
+RabbitServerReadSchema = pydantic_model_creator(RabbitServer, name="RabbitServerRead", exclude=("password", "queues",))
 
 RabbitQueueSchema = pydantic_model_creator(RabbitQueue, name="RabbitQueue")
-RabbitQueueReadSchema = pydantic_model_creator(RabbitQueue, name="RabbitQueueCreate",
-                                               include=("uuid", "exchange_name", "rabbit_server"))
+RabbitQueueReadSchema = pydantic_model_creator(RabbitQueue, name="RabbitQueueRead", exclude=("rabbit_server",), computed=("base_rabbit_admin_url", "queue_name"))
+RabbitQueueListSchema = pydantic_model_creator(RabbitQueue, name="RabbitQueueList", computed=("rabbit_server_id",))
+
