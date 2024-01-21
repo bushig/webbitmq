@@ -12,7 +12,7 @@ services:
   # TODO: remove nginx
 
   redis:
-    image: redis:6.2.2-alpine
+    image: redis:7.2.4-alpine
 
   backend:
     stdin_open: true

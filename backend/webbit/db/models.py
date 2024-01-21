@@ -64,8 +64,7 @@ class RabbitQueue(Model):
 
     class Meta:
         # index for list
-        indexes = (("rabbit_server_id", "-starts_at"), )
-        # indexes = (("starts_at", "rabbit_server_id"), )
+        indexes = (("rabbit_server_id", "starts_at"), )
 
 class QueueBindings(Model):
     """Bindings of queue to exchange"""

@@ -37,11 +37,11 @@ async def check_if_all_exchanges_exist(rabbit_server_info: RabbitServer, exchang
     missing_exchanges = []
     connection = await connect_to_rabbit_server(rabbit_server_info)
     async with connection:
-        channel = await connection.channel()
         for exchange in exchanges:
+            channel = await connection.channel()
             try:
                 exchange = await channel.get_exchange(exchange, ensure=True)
-            except aio_pika.exceptions.ChannelClosed:
+            except (aio_pika.exceptions.ChannelClosed, aio_pika.exceptions.ChannelInvalidStateError):
                 missing_exchanges.append(exchange)
     return missing_exchanges
 

@@ -106,7 +106,7 @@ const AddQueueForm: FC<AddQueueFormProps> = (props) => {
                         validator={validator}
                         onSubmit={submitHandler}
                         uiSchema={uiSchema}
-                        formData={{rabbit_server_id: serverStore.activeServerId, bindings: bindings}}
+                        formData={{rabbit_server_id: serverStore.activeServerId, bindings: bindings, ttl_minutes: 10}}
                         // @ts-ignore
                         extraErrors={extraErrors}
                     />

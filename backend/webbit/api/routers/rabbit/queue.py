@@ -63,7 +63,7 @@ async def create_queue(
     exchanges_list = [binding.exchange for binding in data.bindings]
     missing_exchanges = await check_if_all_exchanges_exist(rabbit_server, exchanges_list)
     if missing_exchanges:
-        raise HTTPException(status_code=400, detail=f"Missing exchanges: {missing_exchanges}")
+        raise HTTPException(status_code=400, detail=f"Эксченжи не существуют: {missing_exchanges}")
     queue_uuid = uuid.uuid4()
     now = datetime.now(tz=timezone.utc)
     expires_at = now + timedelta(minutes=data.ttl_minutes)

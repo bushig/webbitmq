@@ -4,8 +4,10 @@ import React, {VFC} from "react";
 
 const MainPage: VFC = () =>
     (<>
-        <h1>Настройка нотификаций при новых событиях</h1>
-        system preferences - Notifications & Focus - Click on Browser from list - Allow Notification
+        <h1>Если не работают нотификации при новых событиях</h1>
+        <h3>MAC OS</h3>
+        Открываем системные настройки и включаем уведомления
+        system preferences - Notifications & Focus - (Тут выбираем браузер) - Allow Notification
         <br/>
 
     </>);
