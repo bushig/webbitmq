@@ -33,7 +33,7 @@ class RabbitQueue(Model):
 
     rabbit_server: fields.ForeignKeyRelation[RabbitServer] = fields.ForeignKeyField(
         "models.RabbitServer",
-        related_name="queues"
+        related_name="queues",
     )
 
     starts_at = fields.DatetimeField()
@@ -56,11 +56,16 @@ class RabbitQueue(Model):
         return self.rabbit_server__id
 
     # class PydanticMeta:
-    #     computed = ["hostname"]
+    #     computed = ["rabbit_server_id"]
 
 
     def __str__(self):
         return f"RabbitQueue {self.uuid}"
+
+    class Meta:
+        # index for list
+        indexes = (("rabbit_server_id", "-starts_at"), )
+        # indexes = (("starts_at", "rabbit_server_id"), )
 
 class QueueBindings(Model):
     """Bindings of queue to exchange"""

@@ -4,11 +4,10 @@ import React, {VFC} from "react";
 
 const MainPage: VFC = () =>
     (<>
-        Some features
+        <h1>Настройка нотификаций при новых событиях</h1>
+        system preferences - Notifications & Focus - Click on Browser from list - Allow Notification
         <br/>
-        Some links
-        <br/>
-        Some changelogs
+
     </>);
 
 

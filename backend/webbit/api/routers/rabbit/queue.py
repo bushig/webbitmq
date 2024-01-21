@@ -1,3 +1,4 @@
+import asyncio
 import uuid
 
 import json
@@ -10,6 +11,7 @@ from datetime import datetime, timedelta, timezone
 from webbit.core.rabbit import execute_drain_from_rabbit, check_if_all_exchanges_exist
 
 from webbit.core.config import REDIS_URL
+from webbit.core.schemas import QueueListResultSchema
 from webbit.db.models import RabbitQueue, RabbitServer, RabbitQueueReadSchema, RabbitQueueListSchema, QueueBindings
 from webbit.schemas.queue import RabbitQueueCreateSchema, RabbitQueueDetailSchema
 
@@ -28,7 +30,7 @@ async def get_messages(queue_id: str, page: int = 1, page_size: int = 50):
 
 
 # TODO: add pagination
-@router.get("/", response_model=List[RabbitQueueListSchema])
+@router.get("/", response_model=QueueListResultSchema)
 async def get_queues_list(
         server_id: int,
         only_active: bool = False
@@ -36,12 +38,17 @@ async def get_queues_list(
     """
     Get list of available queues
     """
+    total_count_task = RabbitQueue.filter(
+            rabbit_server__id=server_id).count()
 
-    return await RabbitQueueListSchema.from_queryset(
+
+    queues_task = RabbitQueueListSchema.from_queryset(
         RabbitQueue.filter(
             rabbit_server__id=server_id
-        ).order_by('-starts_at')
+        ).order_by('-starts_at').limit(250)
     )
+    total_count, queues = await asyncio.gather(total_count_task, queues_task)
+    return QueueListResultSchema(total=total_count, queues=queues)
 
 
 @router.post("/")

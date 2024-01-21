@@ -21,6 +21,9 @@ services:
       context: backend
       dockerfile: Dockerfile
     command: python webbit/main.py
+    extra_hosts:
+      - host.docker.internal:host-gateway
+
     volumes:
       - ./backend:/app/
       - ./.docker/.ipython:/root/.ipython:cached

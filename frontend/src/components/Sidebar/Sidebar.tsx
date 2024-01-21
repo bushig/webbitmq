@@ -1,11 +1,8 @@
 import React, {ReactElement, VFC} from "react";
-
-import Toolbar from "@mui/material/Toolbar";
 import Divider from "@mui/material/Divider";
 import List from "@mui/material/List";
 import {Drawer} from "@mui/material";
 import Logo from "../Logo/Logo";
-import styles from "./Sidebar.module.scss";
 
 
 const drawerWidth = 240;

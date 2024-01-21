@@ -5,3 +5,12 @@
 .message_wrapper {
   height: 200px;
 }
+
+.scroll_buttons_wrapper {
+  position: absolute;
+  right: 25px;
+  bottom: 25px;
+  display: flex;
+  flex-direction: column;
+
+}

@@ -6,7 +6,7 @@ import QueueList from "../../components/QueueList/QueueList";
 
 const RabbitServerView: VFC = () => {
     const params = useParams();
-    const {serverStore, queuesStore} = useStores()
+    const {serverStore, queuesStore, queuesStore: {totalQueuesCount}} = useStores()
 
     useEffect(() => {
         serverStore.fetchServerMeta(Number(params.serverId))
@@ -20,7 +20,10 @@ const RabbitServerView: VFC = () => {
 
     return (
         <div>
-            <QueueList queues={queuesStore.queues} />
+            <div style={{paddingLeft: 10}}>
+                На этой странице только последние 250 очередей.<br/>
+                Общее количество: {totalQueuesCount}</div>
+            <QueueList queues={queuesStore.queues}/>
         </div>
     )
 };

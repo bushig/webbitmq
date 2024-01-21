@@ -10,6 +10,7 @@ class QueuesStore implements IQueuesStore {
     private rootStore: unknown
 
     queues = []
+    totalQueuesCount = 0
 
     // TODO: fix deps cycle
     constructor(rootStore: unknown) {
@@ -24,7 +25,8 @@ class QueuesStore implements IQueuesStore {
 
             )
             if (resp.status === 200) {
-                this.queues = resp.data
+                this.queues = resp.data.queues
+                this.totalQueuesCount = resp.data.total
             }
             // TODO: handle errors
         } catch (e) {

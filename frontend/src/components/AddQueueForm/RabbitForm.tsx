@@ -2,20 +2,21 @@ import React, {FC, useState} from "react";
 
 import axios from "axios";
 import {observer} from "mobx-react";
-import {Box, Modal, Toolbar, Typography} from "@mui/material";
+import {Box, Modal} from "@mui/material";
 import validator from "@rjsf/validator-ajv8";
 import Form from "@rjsf/mui";
-import {ErrorSchema, RJSFSchema} from "@rjsf/utils";
+import {RJSFSchema} from "@rjsf/utils";
 import {useStores} from "../../hooks";
 import styles from "../AddServerForm/AddServerForm.module.scss";
 
 type AddQueueFormProps = {
     handleClose: () => void
+    bindings?: unknown
 }
 
 // taken from RabbitServerCreate backend openapi, dont edit
 const schema: RJSFSchema = {
-    "title": "RabbitQueueCreateSchema",
+    "title": "Новая очередь",
     "required": [
         "rabbit_server_id",
         "ttl_minutes"
@@ -31,7 +32,7 @@ const schema: RJSFSchema = {
             "minItems": 1,
             "type": "array",
             "items": {
-                "title": "RabbitBindings",
+                "title": "Параметры привязки",
                 "required": [
                     "exchange",
                     "routing_key"
@@ -47,13 +48,13 @@ const schema: RJSFSchema = {
                         "type": "string"
                     }
                 },
-                "description": "Bindings of queue to exchange"
+                "description": "Для эксченжей типа topic можно использовать wildcard. Например users.*"
             },
             "description": "Bindings of queue to exchange",
             "default": []
         },
         "ttl_minutes": {
-            "title": "Ttl Minutes",
+            "title": "TTL in Minutes",
             "type": "integer",
             "description": "Время жизни очереди в минутах"
         }
@@ -73,6 +74,9 @@ const uiSchema: RJSFSchema = {
 const AddQueueForm: FC<AddQueueFormProps> = (props) => {
     const {serverStore} = useStores()
     const {handleClose} = props
+    let {bindings} = props
+    // alert(JSON.stringify(bindings))
+    bindings = !!bindings ? bindings : [{}]
 
     const [extraErrors, setExtraErrors] = useState({});
 
@@ -96,18 +100,13 @@ const AddQueueForm: FC<AddQueueFormProps> = (props) => {
     return (
         <Modal open onClose={handleClose}>
             <Box className={styles.wrapper} bgcolor='background.paper' p="4">
-                <Toolbar className={styles.header}>
-                    <Typography variant="h6" color="inherit">
-                        Новая очередь
-                    </Typography>
-                </Toolbar>
                 <div className={styles.form}>
                     <Form
                         schema={schema}
                         validator={validator}
                         onSubmit={submitHandler}
                         uiSchema={uiSchema}
-                        formData={{rabbit_server_id: serverStore.activeServerId}}
+                        formData={{rabbit_server_id: serverStore.activeServerId, bindings: bindings}}
                         // @ts-ignore
                         extraErrors={extraErrors}
                     />

@@ -34,6 +34,7 @@
 
 .queue_header_wrapper {
   background-color: black;
+  color: white;
 }
 
 
@@ -42,4 +43,19 @@
   flex: 1;
   height: 100%;
   flex-direction: column;
+}
+
+
+.list_header_wrapper {
+  display: flex;
+  flex: 1;
+  height: 100%;
+  flex-direction: row;
+  background-color: rgba(0, 0, 0, 0.87);
+  color: white;
+}
+
+.list_header_column_wrapper {
+  display: flex;
+  //flex: 1;
 }

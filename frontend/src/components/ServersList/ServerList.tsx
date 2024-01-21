@@ -5,7 +5,6 @@ import ServerListElement from "./ServerListElement";
 import {ServerInfoType} from "../../models/servers";
 
 
-
 interface IServerListProps {
     // isCollapsed: boolean
     // onCollapse: () => void

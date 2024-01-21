@@ -21,4 +21,5 @@ export interface MessageType {
     routing_key: string
     headers: Record<string, any>
     exchange: string
+    isHighlighted?: boolean
 }

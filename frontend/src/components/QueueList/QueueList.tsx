@@ -14,7 +14,7 @@ const QueueList: VFC<IServerListProps> = ({queues}) => {
         const [isModalOpen, setIsModalOpen] = useState<boolean>(false)
 
         return <div>
-            <Button variant="contained" color="secondary" startIcon={<AddCircleIcon/>} onClick={() => {
+            <Button style={{margin: 10}} variant="contained" color="secondary" startIcon={<AddCircleIcon/>} onClick={() => {
                 setIsModalOpen(true)
             }}>
                 Создать очередь

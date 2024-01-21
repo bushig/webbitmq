@@ -1,12 +1,10 @@
 import * as React from 'react';
-import {styled, createTheme, ThemeProvider} from '@mui/material/styles';
+import {FC, useEffect, useState} from 'react';
+import {createTheme, ThemeProvider} from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import Box from '@mui/material/Box';
-import ListItemText from "@mui/material/ListItemText";
-import ListItem from "@mui/material/ListItem";
-import {Button, Container, List, MenuList} from "@mui/material";
+import {Button, List} from "@mui/material";
 import AddCircleIcon from '@mui/icons-material/AddCircle';
-import {FC, useEffect, useState} from "react";
 import {observer} from "mobx-react";
 import {Outlet} from "react-router-dom";
 import {ruRU} from '@mui/material/locale';
@@ -18,8 +16,15 @@ import ServerList from "./components/ServersList/ServerList";
 
 const mdTheme = createTheme({
         palette: {
-            mode: 'dark',
+            mode: 'light',
+            primary: {
+                main: "#478cc8",
+            },
+            secondary: {
+                main: "#478cc8",
+            },
         },
+
     },
     ruRU
 );
@@ -42,7 +47,7 @@ const App: FC = () => {
                         {/* start sidebar*/}
                         <ServerList servers={serversStore.servers}/>
 
-                        <Button variant="contained" color="secondary" startIcon={<AddCircleIcon/>} onClick={() => {
+                        <Button style={{margin: 10}} variant="contained" color="secondary" startIcon={<AddCircleIcon/>} onClick={() => {
                             setIsModalOpen(true)
                         }}>Добавить сервер</Button>
                     </List>

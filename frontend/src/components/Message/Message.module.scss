@@ -4,7 +4,7 @@
   font-family: monospace;
   text-overflow: ellipsis;
   overflow: hidden;
-  white-space: nowrap;
+  //white-space: nowrap;
   background-color: #282824;
   color: #D9D8D4;
   font-size: 15px;
@@ -15,7 +15,7 @@
   border-bottom: 1px dashed #8b8b88;
   width: 100%;
   flex: 1;
-  max-height: 50px;
+  min-height: 60px;
 }
 
 .wrapper_wrapper {
@@ -25,38 +25,60 @@
 }
 
 .date {
-  margin-right: 10px;
+  //margin-right: 10px;
   font-size: 12px;
   font-style: italic;
   padding-top: 3px;
   color: lightgreen;
-  width: 100%;
+  width: 30%;
 }
 
 
 .headers {
-  margin-right: 10px;
+  //margin-right: 10px;
   font-size: 12px;
   font-style: italic;
   padding-top: 3px;
-  color: red;
+  color: #5f89f4;
   width: 100%;
+  display: grid;
+  height: 100%;
 }
 
 .app_id {
-  margin-right: 10px;
+  //margin-right: 10px;
   font-size: 12px;
   font-style: italic;
   padding-top: 3px;
   color: gray;
-  width: 100%;
+  width: 30%;
 }
 
 .routing_key {
-  margin-right: 10px;
+  //margin-right: 10px;
   font-size: 12px;
   font-style: italic;
   padding-top: 3px;
   color: #e38282;
-  width: 100%;
+  width: 30%;
+}
+
+.header_copy_link {
+  text-decoration: underline;
+  text-overflow: ellipsis;
+  text-decoration-style: dotted;
+  display: inline-block;
+  overflow-x: hidden;
+  text-wrap: nowrap;
+}
+
+.dot {
+  height: 15px;
+  width: 15px;
+  border-radius: 50%;
+  display: inline-block;
+  border: 1px solid;
+}
+.highlighted {
+  border-left: solid 15px green;
 }

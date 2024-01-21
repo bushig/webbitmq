@@ -1,7 +1,7 @@
 import React, {VFC} from "react";
 import {Box, Modal, Toolbar, Typography} from "@mui/material";
 
-import { RJSFSchema } from '@rjsf/utils';
+import {RJSFSchema} from '@rjsf/utils';
 import Form from '@rjsf/mui';
 import validator from '@rjsf/validator-ajv8';
 import {observer} from "mobx-react";

@@ -1,8 +1,8 @@
 -r requirements.txt
-pytest==7.3.1
-mypy==0.812
-black==21.5b0
-isort==5.8.0
-flake8==3.9.1
-wemake-python-styleguide==0.15.2
+pytest==7.4.4
+mypy==1.8.0
+black==23.11.0
+isort==5.13.2
+flake8==7.0.0
+wemake-python-styleguide==0.18.0
 asgi-lifespan==2.1.0

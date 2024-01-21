@@ -12,7 +12,7 @@ type CountdownTimerProps = {
 const CountdownTimer: VFC<CountdownTimerProps> = ({dateEnd, compact}) => {
     const timerRenderer = ({hours, minutes, seconds, completed}) => {
         let text = `${hours}:${minutes}:${seconds} осталось`
-        let color: 'default' | 'error' = "default"
+        let color: 'success' | 'error' = "success"
         if (completed) {
             // Render a complete state
             text = "ПОТРАЧЕНО";
