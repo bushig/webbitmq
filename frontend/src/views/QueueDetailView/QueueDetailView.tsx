@@ -1,5 +1,5 @@
 // @ts-nocheck
-import React, {FC, useEffect, VFC} from "react";
+import React, {FC, useEffect, useState, VFC} from "react";
 
 import {useParams} from "react-router-dom";
 import {observer} from "mobx-react";
@@ -58,6 +58,10 @@ const QueueDetailView: FC = (props) => {
             });
 
         };
+        ws.onclose = () => {
+            console.log('WS disconnected');
+        }
+
         return ws;
     };
 
@@ -67,9 +71,16 @@ const QueueDetailView: FC = (props) => {
         });
         fetchQueueMeta(uuid).then(() => {
                 fetchMessagesList()
-                wsInit();
+                // Закрываем старое соединение
+                let ws = wsInit();
+                console.log("SETTING WS", ws)
+                window.queue_ws = ws
             }
         )
+        return function cleanup () {
+            // Закрываем старый сокет
+            window.queue_ws.close();
+        }
 
     }, []);
 
