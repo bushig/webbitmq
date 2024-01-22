@@ -8,6 +8,7 @@ export interface IQueueStore {
     activeQueueInfo: QueueInfoType | null
 
     messages: string[]
+    isAutoFollowingNewMessages: boolean
 }
 
 class QueueStore implements IQueueStore {
@@ -18,6 +19,8 @@ class QueueStore implements IQueueStore {
     activeQueueInfo = null
 
     messages = []
+
+    isAutoFollowingNewMessages = false
 
     // TODO: fix deps cycle
     constructor(rootStore: unknown) {
@@ -76,6 +79,10 @@ class QueueStore implements IQueueStore {
     }
     get messagesCount(){
         return this.messages.length
+    }
+
+    toggleIsAutoFollowingNewMessages = ()=> {
+        this.isAutoFollowingNewMessages = !this.isAutoFollowingNewMessages
     }
 
 

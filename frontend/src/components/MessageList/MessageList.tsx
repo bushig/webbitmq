@@ -2,7 +2,7 @@ import React, {FC, useEffect, useRef} from "react";
 import {observer} from "mobx-react";
 import Message from "../Message/Message";
 import {useStores} from "../../hooks";
-import {Fab} from "@mui/material";
+import {Checkbox, Fab, Tooltip} from "@mui/material";
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import styles from "./MessageList.module.scss"
@@ -17,7 +17,9 @@ const MessageList: FC<MessageListProps> = ({handleOpenSnackbar }) => {
         queueStore: {
             messages,
             setHighlightedFalse,
-            messagesCount,
+            isAutoFollowingNewMessages,
+            toggleIsAutoFollowingNewMessages,
+            messagesCount
         }
     } = useStores()
     const refDown = useRef<HTMLDivElement>(null);
@@ -34,11 +36,12 @@ const MessageList: FC<MessageListProps> = ({handleOpenSnackbar }) => {
         block: "end",
       });
     }
-  // useEffect(() => {
-  //   if (messages.length) {
-  //       scrollToBottom()
-  //   }
-  // }, [messagesCount]);
+  useEffect(() => {
+      console.log("USE EFFECT", messages.length, isAutoFollowingNewMessages)
+    if (messages.length && isAutoFollowingNewMessages) {
+        scrollToBottom()
+    }
+  }, [messagesCount, isAutoFollowingNewMessages]);
 
   return (
       <>
@@ -54,6 +57,14 @@ const MessageList: FC<MessageListProps> = ({handleOpenSnackbar }) => {
               <Fab variant="extended" onClick={scrollToTop}>
                   <ArrowUpwardIcon/>
               </Fab>
+              <div className={styles.auto_follow_wrapper} >
+                  {/*<FollowTheSignsIcon fontSize={"small"} />*/}
+                  <Tooltip arrow
+                                        placement="left-start"
+                                        title={"Включение автоматического следования за новыми сообщениями"}>
+                  <Checkbox value={isAutoFollowingNewMessages} onClick={toggleIsAutoFollowingNewMessages} />
+                  </Tooltip>
+              </div>
               <Fab variant="extended" onClick={scrollToBottom}>
                   <ArrowDownwardIcon/>
               </Fab>

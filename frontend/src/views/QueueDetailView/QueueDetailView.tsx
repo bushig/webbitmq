@@ -13,7 +13,6 @@ import CountdownTimer from "../../components/CountdownTimer/CountdownTimer";
 import AddQueueForm from "../../components/AddQueueForm/RabbitForm";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import notifictionsound from "../../assets/sounds/notification.mp3";
-import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
 
 var audio = new Audio(notifictionsound);
 const MessagesCount: VFC = observer((props) => {
@@ -33,7 +32,6 @@ const QueueDetailView: FC = (props) => {
         queueStore: {
             fetchQueueMeta,
             activeQueueInfo,
-            messagesCount,
             fetchMessagesList,
             addMessage,
             bindingsForCopy,
@@ -48,11 +46,10 @@ const QueueDetailView: FC = (props) => {
     const wsInit = () => {
         const ws = new WebSocket(`ws://${window.location.host}/ws/${uuid}`);
         ws.onmessage = event => {
-            console.log("event", event);
             const data = JSON.parse(event.data);
             const messageCountFromElem = parseInt(document.getElementById("messagesCount").textContent) + 1
-            const notif = new Notification("Новый ивент webbit", {
-                body: `${data.exchange}->${data.routing_key} ${messageCountFromElem}`,
+            const notif = new Notification("Новое событие webbit", {
+                body: `${data.exchange}->${data.routing_key} \nВсего сообщений: ${messageCountFromElem}`,
                 // tag: `${data.exchange}->${data.routing_key}`,
             });
             addMessage(data);
@@ -117,7 +114,7 @@ const QueueDetailView: FC = (props) => {
                         <Button style={{margin: 10}} variant="contained" color="secondary" size={"small"}
                                 startIcon={<AddCircleIcon/>} onClick={handleOpenQueueCreation}>Создать копию
                             очереди</Button>
-                        <Checkbox label="Скроллить к новым сообщениям" color={"warning"}/>
+                        {/*<Checkbox label="Скроллить к новым сообщениям" color={"warning"}/>*/}
                     </div>
                     <div className={styles.queueBindingInfo}>
                         <b>Биндинги:</b>
@@ -139,6 +136,7 @@ const QueueDetailView: FC = (props) => {
                     <div style={{display: "flex", flexDirection: "column"}}>
                         <div><b>Количество сообщений:</b> <MessagesCount/></div>
                         <span style={{color: "#d9d8d4", textDecoration: "underline"}}>Новые сообщения появляются внизу</span>
+                        <span style={{color: "#d9d8d4",}}>Для автоматического следования активируй чекбокс в нижнем правом углу.</span>
                     </div>
                     <div>
 

@@ -89,7 +89,6 @@ async def drain(queue_uuid: str, queue: aio_pika.Queue):
         async for message in queue_iter:
             async with message.process():
                 message_info = message.info()
-                print(message_info['timestamp'], type(message_info['timestamp']))
                 msg_body = json.dumps({
                     "payload": message.body.decode("utf8"),
                     "timestamp": datetime.now(tz=timezone.utc).isoformat(),
@@ -101,5 +100,7 @@ async def drain(queue_uuid: str, queue: aio_pika.Queue):
 
 
                 })
-                await redis.lpush(queue_uuid, msg_body)
-                await redis.publish(queue_uuid, msg_body)
+                pipe = redis.pipeline()
+                await pipe.lpush(queue_uuid, msg_body).publish(queue_uuid, msg_body).execute()
+                # await redis.lpush(queue_uuid, msg_body)
+                # await redis.publish(queue_uuid, msg_body)

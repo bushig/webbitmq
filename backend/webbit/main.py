@@ -11,9 +11,8 @@ from tortoise.contrib.fastapi import register_tortoise
 from webbit.core import config
 
 from webbit.api.routers.api import router
-from webbit.core.config import DATABASE_URL
+from webbit.core.config import DATABASE_URL, REDIS_URL
 from webbit.core.consts import MODELS_MODULE
-
 
 def create_app() -> FastAPI:
     application = FastAPI(
@@ -33,14 +32,15 @@ def create_app() -> FastAPI:
         prefix="/api",
     )
 
+
+
     @application.websocket_route("/ws/{queue_id}")
     class Echo(WebSocketEndpoint):
         encoding = "text"
 
         async def on_connect(self, websocket, *args, **kwargs):
             queue_id = websocket.path_params["queue_id"]
-            redis = await aioredis.from_url(
-                'redis://redis', encoding="utf-8")
+            redis = application.state.redis
             self._pubsub = redis.pubsub()
 
             await self._pubsub.subscribe(queue_id)
@@ -54,7 +54,7 @@ def create_app() -> FastAPI:
                 if message["type"] == "subscribe":
                     continue
                 # TODO: break connection on drain end
-                print("message", message)
+                # print("message", message)
                 text_data = message["data"].decode("utf-8")
                 await websocket.send_text(text_data)
 
@@ -88,6 +88,19 @@ def create_app() -> FastAPI:
 
 
 app = create_app()
+
+@app.on_event('startup')
+async def startup_event():
+    # global redis_without_decode
+    # global redis_with_decode
+    # loop = asyncio.get_event_loop()
+    app.state.redis = await aioredis.from_url(
+        REDIS_URL, encoding="utf-8")
+
+# @application.on_event('shutdown')
+# async def shutdown_event():
+#     application.state.redis.close()
+#     await application.state.redis.wait_closed()
 
 if __name__ == "__main__":
     uvicorn.run("main:app", host="0.0.0.0", reload=True, port=8888, ws="websockets")

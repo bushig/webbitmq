@@ -2,18 +2,17 @@ import asyncio
 import uuid
 
 import json
-from typing import List
 
-from redis import asyncio as aioredis
 from fastapi import APIRouter, BackgroundTasks, HTTPException
 from datetime import datetime, timedelta, timezone
 
+from starlette.requests import Request
+
 from webbit.core.rabbit import execute_drain_from_rabbit, check_if_all_exchanges_exist
 
-from webbit.core.config import REDIS_URL
 from webbit.core.schemas import QueueListResultSchema
 from webbit.db.models import RabbitQueue, RabbitServer, RabbitQueueReadSchema, RabbitQueueListSchema, QueueBindings
-from webbit.schemas.queue import RabbitQueueCreateSchema, RabbitQueueDetailSchema
+from webbit.schemas.queue import RabbitQueueCreateSchema
 
 router = APIRouter()
 
@@ -21,10 +20,9 @@ router = APIRouter()
 # TODO: decide on pagination and make it. for now it get all at once
 # TODO: write tests
 @router.get("/{queue_id}/messages")
-async def get_messages(queue_id: str, page: int = 1, page_size: int = 50):
+async def get_messages(request: Request, queue_id: str, page: int = 1, page_size: int = 50):
     # start = (page-1) * page_size
-    redis = await aioredis.from_url(
-        REDIS_URL, encoding="utf-8")
+    redis = request.app.state.redis
     res = await redis.lrange(queue_id, start=0, end=-1)
     return [json.loads(msg) for msg in res]
 

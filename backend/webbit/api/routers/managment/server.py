@@ -3,11 +3,10 @@ import uuid
 import json
 from typing import List
 
-from redis import asyncio as aioredis
 from fastapi import APIRouter, Response, status
 
 from webbit.core.rabbit import connect_to_rabbit_server
-from webbit.db.models import RabbitServerSchema, RabbitServer, RabbitServerCreateSchema, RabbitServerReadSchema
+from webbit.db.models import RabbitServer, RabbitServerCreateSchema, RabbitServerReadSchema
 
 router = APIRouter()
 
