@@ -9,3 +9,4 @@ hiredis==2.3.2
 tortoise-orm==0.19.3
 requests==2.31.0 # needed for tests
 pydantic==1.10.14
+gunicorn==21.2.0
