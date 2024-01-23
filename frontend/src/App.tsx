@@ -24,6 +24,18 @@ const mdTheme = createTheme({
                 main: "#478cc8",
             },
         },
+        components: {
+            MuiListItemButton: {
+                styleOverrides: {
+                    root: {
+                        "&.Mui-selected": {
+                            backgroundColor: "rgba(71, 140, 200, 0.35)",
+                        }
+                    }
+
+                }
+            }
+        }
 
     },
     ruRU
