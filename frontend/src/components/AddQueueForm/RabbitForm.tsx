@@ -46,10 +46,9 @@ const schema: RJSFSchema = {
                     "routing_key": {
                         "title": "Routing Key",
                         "type": "string",
-                        "description":"Для эксченжей типа topic можно использовать wildcard. Например users.*"
-                    }
+                        "description":"Для эксченжей типа topic можно использовать wildcard. Например users.* или *. Так же значение может быть пустым."
+                    },
                 },
-                "description": "Для эксченжей типа topic можно использовать wildcard. Например users.*"
             },
             "description": "Bindings of queue to exchange",
             "default": []
