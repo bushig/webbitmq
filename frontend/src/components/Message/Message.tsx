@@ -1,5 +1,7 @@
 import React, {FC, useState} from "react";
-import ReactJson from "react-json-view";
+import JsonView from "@uiw/react-json-view";
+// @ts-ignore
+import { monokaiTheme } from '@uiw/react-json-view/monokai';
 
 import style from "./Message.module.scss";
 import {MessageType} from "../../models/queues";
@@ -27,6 +29,34 @@ type IMessageProps = {
     onViewHandler: () => void;
     position: number;
 }
+
+
+async function copyToClipboard(textToCopy: string) {
+    // Navigator clipboard api needs a secure context (https)
+    if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(textToCopy);
+    } else {
+        // Use the 'out of viewport hidden text area' trick
+        const textArea = document.createElement("textarea");
+        textArea.value = textToCopy;
+
+        // Move textarea out of the viewport so it's not visible
+        textArea.style.position = "absolute";
+        textArea.style.left = "-999999px";
+
+        document.body.prepend(textArea);
+        textArea.select();
+
+        try {
+            document.execCommand('copy');
+        } catch (error) {
+            console.error(error);
+        } finally {
+            textArea.remove();
+        }
+    }
+}
+
 
 const Message: FC<IMessageProps> = ({message, handleOpenSnackbar, onViewHandler}) => {
     const realData = message;
@@ -69,8 +99,10 @@ const Message: FC<IMessageProps> = ({message, handleOpenSnackbar, onViewHandler}
                                         title={headerValue} key={header_key}>
                             <div className={style.header_copy_link} onClick={(e) => {
                                 e.stopPropagation();
-                                navigator.clipboard.writeText(headerValue)
-                                handleOpenSnackbar(header_key)
+                                copyToClipboard(headerValue).then(() => {
+                                    handleOpenSnackbar(header_key)
+                                })
+
                             }}>
                                 <b>{`${key + 1}.`} {header_key}</b>=<abbr>{headerValue}</abbr>
                             </div>
@@ -83,7 +115,7 @@ const Message: FC<IMessageProps> = ({message, handleOpenSnackbar, onViewHandler}
                 Ошибка парсинга JSON!
                 <br/>{realData.payload}
             </Alert>}
-            {expanded && !isParsingError && <ReactJson src={messageParsed} theme="monokai"/>}
+            {expanded && !isParsingError && <JsonView value={messageParsed} style={monokaiTheme}/>}
         </div>
     );
 };

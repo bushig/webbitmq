@@ -35,7 +35,7 @@ const schema: RJSFSchema = {
                 "title": "Параметры привязки",
                 "required": [
                     "exchange",
-                    "routing_key"
+                    // "routing_key"
                 ],
                 "type": "object",
                 "properties": {
@@ -45,7 +45,8 @@ const schema: RJSFSchema = {
                     },
                     "routing_key": {
                         "title": "Routing Key",
-                        "type": "string"
+                        "type": "string",
+                        "description":"Для эксченжей типа topic можно использовать wildcard. Например users.*"
                     }
                 },
                 "description": "Для эксченжей типа topic можно использовать wildcard. Например users.*"
@@ -63,11 +64,17 @@ const schema: RJSFSchema = {
 
 const uiSchema: RJSFSchema = {
     rabbit_server_id: {"ui:widget": "hidden"},
+
     bindings: {
         'ui:options': {
             orderable: false,
             label: false,
         },
+        items: {
+            routing_key: {
+                "ui:emptyValue": "",
+            }
+        }
     }
 };
 
@@ -109,6 +116,7 @@ const AddQueueForm: FC<AddQueueFormProps> = (props) => {
                         formData={{rabbit_server_id: serverStore.activeServerId, bindings: bindings, ttl_minutes: 10}}
                         // @ts-ignore
                         extraErrors={extraErrors}
+                        noHtml5Validate={true}
                     />
                 </div>
             </Box>

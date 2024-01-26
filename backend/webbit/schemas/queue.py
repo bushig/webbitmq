@@ -10,7 +10,7 @@ from pydantic import BaseModel
 class RabbitBindings(BaseModel):
     """Bindings of queue to exchange"""
     exchange: str
-    routing_key: str
+    routing_key: str = Field(default="")
 
 
 class RabbitQueueCreateSchema(BaseModel):
