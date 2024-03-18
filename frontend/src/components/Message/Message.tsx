@@ -9,6 +9,20 @@ import {Alert, Tooltip} from "@mui/material";
 import {format} from "date-fns";
 import {observer} from "mobx-react";
 
+function unsecuredCopyToClipboard(text: string) {
+  const textArea = document.createElement("textarea");
+  textArea.value = text;
+  document.body.appendChild(textArea);
+  textArea.focus();
+  textArea.select();
+  try {
+    document.execCommand('copy');
+  } catch (err) {
+    console.error('Unable to copy to clipboard', err);
+  }
+  document.body.removeChild(textArea);
+}
+
 const stringToColour = (str: string) => {
     let hash = 0;
     str.split('').forEach(char => {
@@ -115,7 +129,7 @@ const Message: FC<IMessageProps> = ({message, handleOpenSnackbar, onViewHandler}
                 Ошибка парсинга JSON!
                 <br/>{realData.payload}
             </Alert>}
-            {expanded && !isParsingError && <JsonView value={messageParsed} style={monokaiTheme}/>}
+            {expanded && !isParsingError && <JsonView value={messageParsed} style={monokaiTheme} onCopied={(text: string)=> {unsecuredCopyToClipboard(text)}} />}
         </div>
     );
 };
