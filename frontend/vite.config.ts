@@ -16,5 +16,11 @@ export default defineConfig({
         open: false,
         // this sets a default port to 3000
         port: 3000,
+    },
+    publicDir: 'public', // Explicitly set the public directory
+    build: {
+        outDir: 'dist', // Output directory for production builds
+        assetsDir: 'assets', // Directory for bundled assets
+        emptyOutDir: true, // Clean the output directory before build
     }
 })
