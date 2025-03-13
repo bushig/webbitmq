@@ -15,7 +15,7 @@ jobs:
     - name: lint and build frontend
       uses: actions/setup-node@v2
       with:
-        node-version: 12
+        node-version: 20
     - run: npm install
       working-directory: ./frontend
     - run: npm run lint
