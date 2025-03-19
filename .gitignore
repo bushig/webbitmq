@@ -7,3 +7,6 @@ jsconfig.json
 
 # js
 node_modules
+/frontend/build/
+/frontend/dist/
+/backend/db.sqlite3

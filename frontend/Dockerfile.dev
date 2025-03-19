@@ -1,0 +1,20 @@
+FROM node:20-alpine
+WORKDIR /app
+
+# Install dependencies with better caching and performance
+COPY package.json package-lock.json* ./
+
+# Install ALL dependencies, including devDependencies for TypeScript
+RUN npm config set cache /tmp/npm-cache --global && \
+    npm ci --prefer-offline --no-audit --no-fund
+
+# Make sure TypeScript is installed and available in PATH
+RUN npm list typescript || npm install --no-save typescript
+
+# The actual source code will be mounted as a volume
+# to support hot reloading, so we don't need to COPY it here
+EXPOSE 3000
+EXPOSE 35729
+
+# Command will be provided by docker-compose.dev.yml
+CMD ["npm", "run", "start"]

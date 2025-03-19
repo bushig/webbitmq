@@ -1,0 +1,41 @@
+version: '3.7'
+services:
+  app:
+    build:
+      context: .
+      dockerfile: build.Dockerfile
+      # Add build args to improve cache usage
+      args:
+        NODE_ENV: production
+      # Enable BuildKit cache mounting for npm
+      cache_from:
+        - type=registry,ref=node:20-alpine
+    ports:
+      - 8000:80
+    volumes:
+      - ./data:/app/backend/data  # For SQLite database persistence
+    environment:
+      DB_CONNECTION: sqlite:///data/db.sqlite3
+      PYTHONPATH: /app/backend
+      # Set environment variable to control npm cache
+      NPM_CONFIG_CACHE: /tmp/npm-cache
+    depends_on:
+      - redis
+      - rabbit
+      
+  redis:
+    image: redis:7.2.4-alpine
+    volumes:
+      - redis_data:/data  # For Redis persistence
+    command: redis-server --appendonly yes  # Enable AOF persistence
+    
+  #  this one should be commented out
+  rabbit:
+    image: rabbitmq:3.8.14-management-alpine
+    ports:
+    - 15672:15672
+    - 5672:5672
+    logging:
+      driver: none
+volumes:
+  redis_data:  # Named volume for Redis data

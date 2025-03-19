@@ -1,0 +1,68 @@
+version: '3.7'
+services:
+  nginx:
+    image: nginx:1.19-alpine
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf
+    ports:
+      - 8000:80
+    depends_on:
+      - backend
+      - frontend
+    
+  backend:
+    build:
+      context: backend
+      dockerfile: Dockerfile.dev
+    command: watchfiles "python webbit/main.py" --directory /app
+    volumes:
+      - ./backend:/app
+      - ./.docker/.ipython:/root/.ipython:cached
+      - python-cache:/root/.cache/pip:cached
+    environment:
+      DB_CONNECTION: sqlite://db.sqlite3
+      PYTHONPATH: .
+      PYTHONASYNCIODEBUG: 1
+      WATCHFILES_FORCE_POLLING: 'true'
+    extra_hosts:
+      - host.docker.internal:host-gateway
+    depends_on:
+      - redis
+      - rabbit
+    
+  frontend:
+    build:
+      context: frontend
+      dockerfile: Dockerfile.dev
+      cache_from:
+        - type=registry,ref=node:20-alpine
+    volumes:
+      - ./frontend:/app:cached
+      - frontend-node-modules:/app/node_modules:delegated
+      - npm-cache:/tmp/npm-cache:delegated
+    environment:
+      - NODE_ENV=development
+      - CHOKIDAR_USEPOLLING=true
+      - WDS_SOCKET_PORT=0
+      # Speed up npm operations
+      - NPM_CONFIG_LOGLEVEL=warn
+      - NPM_CONFIG_CACHE=/tmp/npm-cache
+      - NPM_CONFIG_PREFER_OFFLINE=true
+    command: npm run start
+    ports:
+      - 3000:3000
+      
+  redis:
+    image: redis:7.2.4-alpine
+    
+  rabbit:
+    image: rabbitmq:3.8.14-management-alpine
+    ports:
+      - 15672:15672
+      - 5672:5672
+    logging:
+      driver: none
+volumes:
+  frontend-node-modules:
+  python-cache:
+  npm-cache:
