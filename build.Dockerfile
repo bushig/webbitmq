@@ -20,7 +20,7 @@ COPY frontend/*.html frontend/*.ts frontend/*.js frontend/*.json ./
 RUN npm run build
 
 # Stage 2: Build the backend and combine with Nginx
-FROM python:3.12-slim
+FROM ghcr.io/astral-sh/uv:python3.12-bookworm-slim
 WORKDIR /app
 
 # Install Nginx and other dependencies - group commands to reduce layers
@@ -30,9 +30,11 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-# Install Python dependencies for the backend - use pip cache
-COPY backend/requirements.txt ./
-RUN pip install --no-cache-dir -r requirements.txt
+# Copy pyproject.toml for dependencies
+COPY backend/pyproject.toml ./
+
+# Install Python dependencies using uv (already available in the image)
+RUN uv pip install --system -e .
 
 # Copy the backend code
 COPY backend /app/backend
