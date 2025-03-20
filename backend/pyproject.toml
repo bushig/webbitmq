@@ -1,10 +1,81 @@
-[tool.black]
-line-length = 88
+[build-system]
+requires = ["setuptools>=42", "wheel"]
+build-backend = "setuptools.build_meta"
 
-[tool.isort]
-profile = "black"
-src_paths = ["webbit", "tests"]
-combine_as_imports = true
+[project]
+name = "webbit"
+version = "0.1.0"
+description = "WebbitMQ application"
+requires-python = ">=3.12"
+dependencies = [
+    "fastapi==0.109.0",
+    "httpx==0.26.0",
+    "uvicorn[standard]==0.26.0",
+    "aio_pika==9.4.0",
+    "websockets==12.0",
+    "async-timeout==4.0.3",
+    "redis==5.0.1",
+    "hiredis==2.3.2",
+    "tortoise-orm==0.19.3",
+    "requests==2.31.0",
+    "pydantic==1.10.14",
+    "gunicorn==21.2.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest==7.4.4",
+    "mypy==1.8.0",
+    "ruff==0.1.13",
+    "asgi-lifespan==2.1.0",
+]
+
+[tool.ruff]
+# Enable Pyflakes (`F`), isort (`I`), pycodestyle (`E`), and Black-compatible formatter (`Q`)
+lint.select = ["E", "F", "I", "Q", "W", "N", "B", "C4", "SIM", "TCH"]
+lint.ignore = []
+
+# Same line length as Black
+line-length = 120
+
+# Target Python 3.12
+target-version = "py312"
+
+# Exclude directories
+exclude = [
+    ".git",
+    ".venv",
+    "venv",
+    "__pycache__",
+    "build",
+    "dist",
+]
+
+[tool.ruff.format]
+# Use double quotes for strings
+quote-style = "double"
+
+# Black-compatible formatting
+line-ending = "auto"
+
+[tool.ruff.lint.isort]
+known-third-party = ["fastapi", "pydantic", "starlette"]
+
+[tool.ruff.lint.pep8-naming]
+# Allow Pydantic's `Validator` decorator to trigger field name classification
+classmethod-decorators = ["classmethod", "validator", "root_validator"]
+
+[tool.mypy]
+python_version = "3.12"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true
+disallow_incomplete_defs = true
+
+[[tool.mypy.overrides]]
+module = ["tests.*"]
+disallow_untyped_defs = false
+disallow_incomplete_defs = false
 
 [tool.pytest.ini_options]
 testpaths = "tests"

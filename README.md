@@ -49,13 +49,13 @@ services:
       PYTHONPATH: /app/backend
     depends_on:
       - redis
-      
+
   redis:
     image: redis:7.2.4-alpine
     volumes:
       - redis_data:/data  # For Redis persistence
     command: redis-server --appendonly yes  # Enable AOF persistence
-    
+
   # RabbitMQ service (commented out by default)
   # This is only for demonstration and testing. For production use,
   # you'll typically connect to your existing RabbitMQ instances.
@@ -96,19 +96,26 @@ WebbitMQ uses SQLite for database storage and Redis for message history. The doc
 
 ## Development
 
-### Setting up the Development Environment
-
-WebbitMQ provides a development environment with hot-reloading for both frontend and backend:
+### Starting developer environment
 
 ```bash
-# Start the development environment
-make dev-up
+make up
+```
 
-# View logs
-make dev-logs
+### Development Prerequisites
 
-# Stop the development environment
-make dev-down
+Before starting development, you'll need to install:
+
+1. **uv**:
+   - Installation: [uv installation guide](https://github.com/astral-sh/uv#installation)
+
+2. **pre-commit**:
+   - Installation: [pre-commit installation guide](https://pre-commit.com/#installation)
+   - After installation, run `pre-commit install` in the project root
+
+After making changes to dependencies in pyproject.toml, update the lock file using:
+```bash
+make lock
 ```
 
 ### Project Structure
@@ -116,7 +123,6 @@ make dev-down
 - `backend/`: Python backend using FastAPI
 - `frontend/`: React/TypeScript frontend
 - `nginx/`: Nginx configuration files
-- `scripts/`: Utility scripts for development and testing
 
 ### Running Tests
 
@@ -149,22 +155,7 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 4. Push to the branch (`git push origin feature/amazing-feature`)
 5. Open a Pull Request
 
-## Roadmap
-
-### MVP Goals
-- Deployment instructions and working deployment with update plan
-- Ability to copy existing queues from history
-
-### Version 1.0 Goals
-- Integration with RabbitMQ Management API
-- Enhanced frontend UI/UX
-- Comprehensive test coverage
 
 ## License
 
 This project is licensed under the MIT License - see the LICENSE file for details.
-
-## Acknowledgments
-
-- Thanks to all contributors who have helped make this project possible
-- Built with FastAPI, React, and RabbitMQ

@@ -10,3 +10,6 @@ node_modules
 /frontend/build/
 /frontend/dist/
 /backend/db.sqlite3
+
+# python
+__pycache__/

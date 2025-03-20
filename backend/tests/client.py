@@ -5,7 +5,6 @@ from httpx._types import RequestFiles
 
 
 class AsyncTestClient(AsyncClient):
-
     async def generic_request(
         self,
         method: str,
@@ -35,7 +34,6 @@ class AsyncTestClient(AsyncClient):
         response = await self.generic_request(method, path, json, data, files, headers, expected_status)
         return response.json()
 
-
     async def create_server(
         self,
         data: dict,
@@ -45,22 +43,23 @@ class AsyncTestClient(AsyncClient):
             method="POST",
             path="/api/management/servers/",
             data=data,
-            expected_status=expected_status
+            expected_status=expected_status,
         )
+
     async def create_queue(
         self,
         data: dict,
         expected_status: int = 200,
     ) -> Any:
-        raise NotImplemented
+        raise NotImplementedError
+
     async def check_server_connection(
         self,
         server_id: int,
         expected_status: int = 200,
     ) -> Any:
-
         return await self.generic_request_json(
             method="POST",
             path=f"/api/management/servers/{server_id}/check_connection",
-            expected_status=expected_status
+            expected_status=expected_status,
         )

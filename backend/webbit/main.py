@@ -1,23 +1,20 @@
 import asyncio
 import logging
-from typing import List, Dict
 
-from fastapi import FastAPI, WebSocket
 import uvicorn
+from fastapi import FastAPI, WebSocket
 from redis import asyncio as aioredis
 from starlette.endpoints import WebSocketEndpoint
 from tortoise.contrib.fastapi import register_tortoise
 
-from webbit.core import config
-
 from webbit.api.routers.api import router
+from webbit.core import config
 from webbit.core.config import DATABASE_URL, REDIS_URL
 from webbit.core.consts import MODELS_MODULE
 
+
 def create_app() -> FastAPI:
-    application = FastAPI(
-        title=config.PROJECT_NAME, docs_url="/api/docs", openapi_url="/api"
-    )
+    application = FastAPI(title=config.PROJECT_NAME, docs_url="/api/docs", openapi_url="/api")
     register_tortoise(
         application,
         db_url=DATABASE_URL,
@@ -31,8 +28,6 @@ def create_app() -> FastAPI:
         router,
         prefix="/api",
     )
-
-
 
     @application.websocket_route("/ws/{queue_id}")
     class Echo(WebSocketEndpoint):
@@ -62,7 +57,6 @@ def create_app() -> FastAPI:
             self.consumer_task.cancel()
             print("websocket disconnected")
 
-
     # @application.websocket("/ws/{queue_id}")
     # async def websocket_endpoint(websocket: WebSocket, queue_id: str):
     #     redis = await aioredis.from_url(
@@ -89,13 +83,14 @@ def create_app() -> FastAPI:
 
 app = create_app()
 
-@app.on_event('startup')
+
+@app.on_event("startup")
 async def startup_event():
     # global redis_without_decode
     # global redis_with_decode
     # loop = asyncio.get_event_loop()
-    app.state.redis = await aioredis.from_url(
-        REDIS_URL, encoding="utf-8")
+    app.state.redis = await aioredis.from_url(REDIS_URL, encoding="utf-8")
+
 
 # @application.on_event('shutdown')
 # async def shutdown_event():
