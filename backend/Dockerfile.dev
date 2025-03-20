@@ -1,10 +1,12 @@
-FROM python:3.11-slim
+FROM ghcr.io/astral-sh/uv:python3.12-bookworm-slim
 
 WORKDIR /app
 
-# Install dev dependencies including watchfiles for hot reloading
-COPY requirements.txt dev-requirements.txt ./
-RUN pip install --no-cache-dir -r dev-requirements.txt watchfiles
+# Copy pyproject.toml for dependencies
+COPY pyproject.toml ./
+
+# Install Python dependencies including dev dependencies using uv
+RUN uv pip install --system -e .[dev] watchfiles
 
 # The actual application code will be mounted as a volume
 # to support hot reloading, so we don't need to COPY it here

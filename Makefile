@@ -20,11 +20,12 @@ lint: ## Run backend lints
 test: up ## Run tests in development environment
 	@docker exec -it webbitmq-backend-1 pytest -s ./tests
 
+# Dependency management
+.PHONY: lock
+lock: ## Lock dependencies using uv to generate uv.lock file
+	cd ./backend && uv lock
+
 # Build commands
 .PHONY: build-prod
 build-prod: ## Build production Docker image
 	@docker build -t webbitmq:latest -f build.Dockerfile .
-
-.PHONY: lock
-lock: ## Update poetry.lock file
-	@docker exec -it frachter_api_1 poetry lock --no-update
