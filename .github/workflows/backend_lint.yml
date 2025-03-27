@@ -26,10 +26,10 @@ jobs:
             ${{ runner.os }}-uv-
 
       - name: Install dependencies
-        run: cd backend && uv pip install -e .[dev]
+        run: cd backend && uv pip install -e .[dev] --system
 
       - name: Run linters
-        run: sh ./scripts/lint
+        run: sh ./scripts/lint # TODO: fix
 
       - name: Run tests
         env:

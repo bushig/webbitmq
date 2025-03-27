@@ -1,4 +1,5 @@
 # WebbitMQ
+[![pre-commit.ci status](https://results.pre-commit.ci/badge/github/bushig/webbitmq/master.svg)](https://results.pre-commit.ci/latest/github/bushig/webbitmq/master)
 
 A powerful, web-based RabbitMQ monitoring and management tool that allows you to catch, record, and analyze RabbitMQ messages on demand.
 
