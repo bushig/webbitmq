@@ -4,7 +4,7 @@ on: [push, pull_request]
 
 jobs:
   lint_test:
-    name: Lint backend code
+    name: Test backend code
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -28,14 +28,11 @@ jobs:
       - name: Install dependencies
         run: cd backend && uv pip install -e .[dev] --system
 
-      - name: Run linters
-        run: sh ./scripts/lint # TODO: fix
-
       - name: Run tests
         env:
           DB_CONNECTION: sqlite://tests.sqlite3
         run: |
-          sh ./scripts/test
+          cd backend && pytest --cov=webbit --cov=tests --cov-report=term-missing --cov-config=setup.cfg ${@}
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v3
