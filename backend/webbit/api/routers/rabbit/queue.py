@@ -1,17 +1,20 @@
 import asyncio
-import uuid
-
 import json
-
-from fastapi import APIRouter, BackgroundTasks, HTTPException
+import uuid
 from datetime import datetime, timedelta, timezone
 
+from fastapi import APIRouter, BackgroundTasks, HTTPException
 from starlette.requests import Request
 
-from webbit.core.rabbit import execute_drain_from_rabbit, check_if_all_exchanges_exist
-
+from webbit.core.rabbit import check_if_all_exchanges_exist, execute_drain_from_rabbit
 from webbit.core.schemas import QueueListResultSchema
-from webbit.db.models import RabbitQueue, RabbitServer, RabbitQueueReadSchema, RabbitQueueListSchema, QueueBindings
+from webbit.db.models import (
+    QueueBindings,
+    RabbitQueue,
+    RabbitQueueListSchema,
+    RabbitQueueReadSchema,
+    RabbitServer,
+)
 from webbit.schemas.queue import RabbitQueueCreateSchema
 
 router = APIRouter()
@@ -29,21 +32,14 @@ async def get_messages(request: Request, queue_id: str, page: int = 1, page_size
 
 # TODO: add pagination
 @router.get("/", response_model=QueueListResultSchema)
-async def get_queues_list(
-        server_id: int,
-        only_active: bool = False
-):
+async def get_queues_list(server_id: int, only_active: bool = False):
     """
     Get list of available queues
     """
-    total_count_task = RabbitQueue.filter(
-            rabbit_server__id=server_id).count()
-
+    total_count_task = RabbitQueue.filter(rabbit_server__id=server_id).count()
 
     queues_task = RabbitQueueListSchema.from_queryset(
-        RabbitQueue.filter(
-            rabbit_server__id=server_id
-        ).order_by('-starts_at').limit(250)
+        RabbitQueue.filter(rabbit_server__id=server_id).order_by("-starts_at").limit(250)
     )
     total_count, queues = await asyncio.gather(total_count_task, queues_task)
     return QueueListResultSchema(total=total_count, queues=queues)
@@ -51,8 +47,8 @@ async def get_queues_list(
 
 @router.post("/")
 async def create_queue(
-        data: RabbitQueueCreateSchema,
-        background_tasks: BackgroundTasks,
+    data: RabbitQueueCreateSchema,
+    background_tasks: BackgroundTasks,
 ):
     """
     Creates new queue and starts consumption
@@ -67,26 +63,21 @@ async def create_queue(
     expires_at = now + timedelta(minutes=data.ttl_minutes)
 
     queue = await RabbitQueue.create(
-        uuid=queue_uuid, rabbit_server_id=rabbit_server.id, starts_at=now,
-        expires_at=expires_at
+        uuid=queue_uuid,
+        rabbit_server_id=rabbit_server.id,
+        starts_at=now,
+        expires_at=expires_at,
     )
-    queue_bindings = [QueueBindings(queue=queue, exchange_name=binding.exchange, routing_key=binding.routing_key) for
-              binding in data.bindings]
+    queue_bindings = [
+        QueueBindings(queue=queue, exchange_name=binding.exchange, routing_key=binding.routing_key)
+        for binding in data.bindings
+    ]
     await QueueBindings.bulk_create(queue_bindings)
 
-    task_kwargs = {
-        "queue_uuid": str(queue_uuid),
-        "ttl_minutes": data.ttl_minutes
-
-    }
+    task_kwargs = {"queue_uuid": str(queue_uuid), "ttl_minutes": data.ttl_minutes}
     # TODO: before creating queue, check if exchange exists and connectible
-    background_tasks.add_task(
-        execute_drain_from_rabbit,
-        **task_kwargs
-    )
-    return {
-        "uuid": queue_uuid
-    }
+    background_tasks.add_task(execute_drain_from_rabbit, **task_kwargs)
+    return {"uuid": queue_uuid}
 
 
 @router.get("/{queue_id}", response_model=RabbitQueueReadSchema)

@@ -1,17 +1,11 @@
-import asyncio
-from typing import Generator, AsyncGenerator
+from typing import AsyncGenerator
 
 import pytest
-from fastapi.testclient import TestClient
-from httpx import AsyncClient
+from asgi_lifespan import LifespanManager
 from tortoise import Tortoise
 
-from tortoise.contrib.test import initializer, finalizer
-
 from tests.client import AsyncTestClient
-from webbit.core.consts import MODELS_MODULE
 from webbit.main import app
-from asgi_lifespan import LifespanManager
 
 
 @pytest.fixture(scope="module", autouse=True)
@@ -27,4 +21,4 @@ async def client(anyio_backend) -> AsyncGenerator[AsyncTestClient, None]:
 
 @pytest.fixture(scope="module")
 def anyio_backend() -> str:
-    return 'asyncio'
+    return "asyncio"
