@@ -6,7 +6,7 @@ WORKDIR /app
 COPY pyproject.toml ./
 
 # Install Python dependencies including dev dependencies using uv
-RUN uv pip install --system -e .[dev] watchfiles
+RUN uv pip install --system -e .[dev]
 
 # The actual application code will be mounted as a volume
 # to support hot reloading, so we don't need to COPY it here

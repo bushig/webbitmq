@@ -5,11 +5,16 @@ help: ## Show help
 # Development environment commands
 .PHONY: up
 up: ## Start development environment with hot reload
-	@docker-compose -f docker-compose.dev.yml up
+	@docker compose -f docker-compose.dev.yml up
 
 .PHONY: down
 down: ## Stop and remove development containers
-	@docker-compose -f docker-compose.dev.yml down
+	@docker compose -f docker-compose.dev.yml down
+
+# Build command dev
+.PHONY: build-prod
+build-dev: ## Build production Docker image
+	@docker compose -f docker-compose.dev.yml build
 
 # Testing and linting
 .PHONY: lint
@@ -20,6 +25,10 @@ lint: ## Run backend lints
 test: up ## Run tests in development environment
 	@docker exec -it webbitmq-backend-1 pytest -s ./tests
 
+.PHONY: test-cov
+test-cov: up ## Run tests with coverage report
+	@docker exec -it webbitmq-backend-1 pytest --cov-report=xml --cov-report=term
+
 # Dependency management
 .PHONY: lock
 lock: ## Lock dependencies using uv to generate uv.lock file
@@ -29,3 +38,5 @@ lock: ## Lock dependencies using uv to generate uv.lock file
 .PHONY: build-prod
 build-prod: ## Build production Docker image
 	@docker build -t webbitmq:latest -f build.Dockerfile .
+
+

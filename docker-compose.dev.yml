@@ -14,7 +14,7 @@ services:
     build:
       context: backend
       dockerfile: Dockerfile.dev
-    command: watchfiles "python webbit/main.py" --directory /app
+    command: bash -c "fastapi dev webbit/main.py"
     volumes:
       - ./backend:/app
       - ./.docker/.ipython:/root/.ipython:cached
@@ -23,7 +23,6 @@ services:
       DB_CONNECTION: sqlite://db.sqlite3
       PYTHONPATH: .
       PYTHONASYNCIODEBUG: 1
-      WATCHFILES_FORCE_POLLING: 'true'
     extra_hosts:
       - host.docker.internal:host-gateway
     depends_on:

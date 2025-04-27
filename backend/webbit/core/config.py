@@ -5,7 +5,7 @@ from starlette.datastructures import CommaSeparatedStrings, Secret
 
 VERSION = "0.0.1"
 
-config = Config(".env")
+config = Config(".env")  # TODO: not needed + move to pydantic settings
 
 DEBUG: bool = config("DEBUG", cast=bool, default=False)
 

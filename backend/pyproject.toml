@@ -8,18 +8,18 @@ version = "0.1.0"
 description = "WebbitMQ application"
 requires-python = ">=3.12"
 dependencies = [
-    "fastapi==0.109.0",
+    "fastapi[standard]==0.115.12",
     "httpx==0.26.0",
-    "uvicorn[standard]==0.26.0",
+    "uvicorn[standard]==0.34.0",
     "aio_pika==9.4.0",
     "websockets==12.0",
     "async-timeout==4.0.3",
     "redis==5.0.1",
     "hiredis==2.3.2",
-    "tortoise-orm==0.19.3",
+    "tortoise-orm[accel]==0.24.2",
     "requests==2.31.0",
-    "pydantic==1.10.14",
-    "gunicorn==21.2.0",
+    "pydantic==2.10.6",
+    "gunicorn==23.0.0",
 ]
 
 [project.optional-dependencies]
@@ -28,6 +28,8 @@ dev = [
     "mypy==1.8.0",
     "ruff==0.1.13",
     "asgi-lifespan==2.1.0",
+    "pytest-cov==4.1.0",
+    "coverage==7.2.7",
 ]
 
 [tool.ruff]
@@ -80,15 +82,32 @@ disallow_incomplete_defs = false
 [tool.pytest.ini_options]
 testpaths = "tests"
 filterwarnings = "error"
-#addopts = '''
-#  --strict-markers
-#  --tb=short
-#  --cov=app
-#  --cov=tests
-#  --cov-branch
-#  --cov-report=term-missing
-#  --cov-report=html
-#  --cov-report=xml
-#  --no-cov-on-fail
-#  --cov-fail-under=100
-#'''
+addopts = '''
+  --strict-markers
+  --tb=short
+  --cov=webbit
+  --cov=tests
+  --cov-branch
+  --cov-report=term-missing
+  --cov-report=xml
+  --no-cov-on-fail
+  --cov-fail-under=80
+'''
+
+[tool.coverage.run]
+branch = true
+source = ["webbit", "tests"]
+omit = ["*/tests/*"]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "raise NotImplementedError",
+    "if __name__ == .__main__.:",
+    "pass",
+    "raise ImportError",
+]
+
+[tool.coverage.xml]
+output = "coverage.xml"
