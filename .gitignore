@@ -13,3 +13,5 @@ node_modules
 
 # python
 __pycache__/
+backend/db.sqlite3-shm
+backend/db.sqlite3-wal

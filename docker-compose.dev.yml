@@ -1,4 +1,3 @@
-version: '3.7'
 services:
   nginx:
     image: nginx:1.19-alpine
@@ -59,8 +58,7 @@ services:
     ports:
       - 15672:15672
       - 5672:5672
-    logging:
-      driver: none
+    attach: false # to remove logs
 volumes:
   frontend-node-modules:
   python-cache:

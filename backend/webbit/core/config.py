@@ -1,27 +1,40 @@
 from typing import List
 
-from starlette.config import Config
-from starlette.datastructures import CommaSeparatedStrings, Secret
+from pydantic import Field, SecretStr
+from pydantic_settings import BaseSettings
 
 VERSION = "0.0.1"
 
-config = Config(".env")  # TODO: not needed + move to pydantic settings
 
-DEBUG: bool = config("DEBUG", cast=bool, default=False)
+class Settings(BaseSettings):
+    # model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8", extra="ignore")
 
-DATABASE_URL: str = config("DB_CONNECTION", cast=str)
-MAX_CONNECTIONS_COUNT: int = config("MAX_CONNECTIONS_COUNT", cast=int, default=10)
-MIN_CONNECTIONS_COUNT: int = config("MIN_CONNECTIONS_COUNT", cast=int, default=10)
+    DEBUG: bool = False
 
-SECRET_KEY: Secret = config("SECRET_KEY", cast=Secret, default="SECRET")
+    DB_CONNECTION: str
+    MAX_CONNECTIONS_COUNT: int = 10
+    MIN_CONNECTIONS_COUNT: int = 10
 
-PROJECT_NAME: str = config("PROJECT_NAME", default="webbitmq")
-ALLOWED_HOSTS: List[str] = config(
-    "ALLOWED_HOSTS",
-    cast=CommaSeparatedStrings,
-    default="",
-)
+    SECRET_KEY: SecretStr = Field(default="SECRET")
 
-WEBBIT_QUEUES_PREFIX = "webbit_"
+    PROJECT_NAME: str = "webbitmq"
+    ALLOWED_HOSTS: List[str] = Field(default_factory=list)
 
-REDIS_URL: str = config("REDIS_URL", default="redis://redis")
+    WEBBIT_QUEUES_PREFIX: str = "webbit_"
+
+    REDIS_URL: str = "redis://redis"
+
+
+settings = Settings()
+
+# temporary for backward compatibility
+# TODO: remove those
+DEBUG: bool = settings.DEBUG
+DATABASE_URL: str = settings.DB_CONNECTION
+MAX_CONNECTIONS_COUNT: int = settings.MAX_CONNECTIONS_COUNT
+MIN_CONNECTIONS_COUNT: int = settings.MIN_CONNECTIONS_COUNT
+SECRET_KEY: SecretStr = settings.SECRET_KEY
+PROJECT_NAME: str = settings.PROJECT_NAME
+ALLOWED_HOSTS: List[str] = settings.ALLOWED_HOSTS
+WEBBIT_QUEUES_PREFIX: str = settings.WEBBIT_QUEUES_PREFIX
+REDIS_URL: str = settings.REDIS_URL
