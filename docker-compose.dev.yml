@@ -9,7 +9,7 @@ services:
     depends_on:
       - backend
       - frontend
-    
+
   backend:
     build:
       context: backend
@@ -29,7 +29,7 @@ services:
     depends_on:
       - redis
       - rabbit
-    
+
   frontend:
     build:
       context: frontend
@@ -51,10 +51,10 @@ services:
     command: npm run start
     ports:
       - 3000:3000
-      
+
   redis:
     image: redis:7.2.4-alpine
-    
+
   rabbit:
     image: rabbitmq:3.8.14-management-alpine
     ports:
