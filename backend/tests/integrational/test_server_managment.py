@@ -7,6 +7,7 @@ from webbit.db.models import RabbitServer
 
 # TODO: доделать тесты с параметрайзом
 
+
 @pytest.mark.anyio
 async def test_create_server_api(client: AsyncTestClient, valid_server):  # nosec
     """
@@ -16,18 +17,21 @@ async def test_create_server_api(client: AsyncTestClient, valid_server):  # nose
     # TODO: move to client
     response = await client.check_server_connection(server_id)
 
+
 @pytest.mark.anyio
 async def test_invalid_server_fails_to_connect(client: AsyncTestClient):  # nosec
     """
     Server is created and can be connected to
     """
-    response = await client.create_server({
-                               "host": "nonhost", # nonexistent host
-                               "name": "server_name",
-                               "username": "guest",
-                               "password": "guest",
-                               "port": 5672
-                           })
+    response = await client.create_server(
+        {
+            "host": "nonhost",  # nonexistent host
+            "name": "server_name",
+            "username": "guest",
+            "password": "guest",
+            "port": 5672,
+        }
+    )
     server_id = response["id"]
     response = await client.check_server_connection(server_id)
     data = response.json()
@@ -39,7 +43,6 @@ async def test_invalid_server_fails_to_connect(client: AsyncTestClient):  # nose
 async def test_get_server_list_no_secret_fields(client):  # nosec
 
     await create_server_in_db()
-
 
     response = await client.get("/api/management/servers/")
     assert response.status_code == 200
