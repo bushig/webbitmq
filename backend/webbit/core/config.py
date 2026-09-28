@@ -25,5 +25,3 @@ ALLOWED_HOSTS: List[str] = config(
 WEBBIT_QUEUES_PREFIX = "webbit_"
 
 REDIS_URL: str = config("REDIS_URL", default="redis://redis")
-
-
