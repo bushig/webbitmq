@@ -25,12 +25,13 @@ async def connect_to_rabbit_server(server_info: RabbitServer) -> aio_pika.Connec
         login=server_info.username,
         password=server_info.password,
         virtualhost=server_info.vhost,
-
     )
     return connection
 
 
-async def check_if_all_exchanges_exist(rabbit_server_info: RabbitServer, exchanges: List[str]) -> List[str]:
+async def check_if_all_exchanges_exist(
+    rabbit_server_info: RabbitServer, exchanges: List[str]
+) -> List[str]:
     """
     Checks if all exchanges exist on server, returns list of missing exchanges
     """
@@ -41,21 +42,24 @@ async def check_if_all_exchanges_exist(rabbit_server_info: RabbitServer, exchang
             channel = await connection.channel()
             try:
                 exchange = await channel.get_exchange(exchange, ensure=True)
-            except (aio_pika.exceptions.ChannelClosed, aio_pika.exceptions.ChannelInvalidStateError):
+            except (
+                aio_pika.exceptions.ChannelClosed,
+                aio_pika.exceptions.ChannelInvalidStateError,
+            ):
                 missing_exchanges.append(exchange)
     return missing_exchanges
 
+
 # TODO: Run in other process (celery, other?)
-async def execute_drain_from_rabbit(
-        queue_uuid: str,
-        ttl_minutes: int
-):
+async def execute_drain_from_rabbit(queue_uuid: str, ttl_minutes: int):
     """
     Drains messages from rabbit exchange, using self-destructible queue.
     :param queue_uuid: Queue data
     :param ttl_minutes: Time of queue's life
     """
-    queue_info = await RabbitQueue.get(uuid=queue_uuid).prefetch_related("rabbit_server", "bindings")
+    queue_info = await RabbitQueue.get(uuid=queue_uuid).prefetch_related(
+        "rabbit_server", "bindings"
+    )
     rabbit_server_info = queue_info.rabbit_server
 
     connection = await connect_to_rabbit_server(rabbit_server_info)
@@ -64,7 +68,9 @@ async def execute_drain_from_rabbit(
 
         # TODO: handle aio_pika.exceptions.ChannelClosed (no exchange)
 
-        queue = await channel.declare_queue(f"{WEBBIT_QUEUES_PREFIX}{queue_info.uuid}", auto_delete=True)
+        queue = await channel.declare_queue(
+            f"{WEBBIT_QUEUES_PREFIX}{queue_info.uuid}", auto_delete=True
+        )
         # TODO: optimize with asyncio.gather
         # TODO: create exchance only once (keep mapping in memory)
         for binding in queue_info.bindings:
@@ -80,8 +86,7 @@ async def drain(queue_uuid: str, queue: aio_pika.Queue):
     """
     Takes messages from rabbit and forwards them to redis
     """
-    redis = await aioredis.from_url(
-        REDIS_URL, encoding="utf-8", decode_responses=True)
+    redis = await aioredis.from_url(REDIS_URL, encoding="utf-8", decode_responses=True)
     # pubsub = redis.pubsub()
     # await pubsub.subscribe(queue_uuid)
     message: Message
@@ -89,18 +94,20 @@ async def drain(queue_uuid: str, queue: aio_pika.Queue):
         async for message in queue_iter:
             async with message.process():
                 message_info = message.info()
-                msg_body = json.dumps({
-                    "payload": message.body.decode("utf8"),
-                    "timestamp": datetime.now(tz=timezone.utc).isoformat(),
-                    "routing_key": message_info["routing_key"],
-                    "headers": message_info["headers"],
-                    "app_id": message_info["app_id"],
-                    "content_type": message_info["content_type"],
-                    "exchange": message_info["exchange"],
-
-
-                })
+                msg_body = json.dumps(
+                    {
+                        "payload": message.body.decode("utf8"),
+                        "timestamp": datetime.now(tz=timezone.utc).isoformat(),
+                        "routing_key": message_info["routing_key"],
+                        "headers": message_info["headers"],
+                        "app_id": message_info["app_id"],
+                        "content_type": message_info["content_type"],
+                        "exchange": message_info["exchange"],
+                    }
+                )
                 pipe = redis.pipeline()
-                await pipe.lpush(queue_uuid, msg_body).publish(queue_uuid, msg_body).execute()
+                await pipe.lpush(queue_uuid, msg_body).publish(
+                    queue_uuid, msg_body
+                ).execute()
                 # await redis.lpush(queue_uuid, msg_body)
                 # await redis.publish(queue_uuid, msg_body)
