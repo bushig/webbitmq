@@ -7,6 +7,7 @@ from webbit.db.models import RabbitQueueListSchema
 
 class ServerSettings(BaseModel):
     """Settings of application for frontend"""
+
     can_edit_servers: bool
 
 
