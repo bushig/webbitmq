@@ -27,4 +27,4 @@ async def client(anyio_backend) -> AsyncGenerator[AsyncTestClient, None]:
 
 @pytest.fixture(scope="module")
 def anyio_backend() -> str:
-    return 'asyncio'
+    return "asyncio"
