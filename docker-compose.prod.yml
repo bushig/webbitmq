@@ -22,13 +22,13 @@ services:
     depends_on:
       - redis
       - rabbit
-      
+
   redis:
     image: redis:7.2.4-alpine
     volumes:
       - redis_data:/data  # For Redis persistence
     command: redis-server --appendonly yes  # Enable AOF persistence
-    
+
   #  this one should be commented out
   rabbit:
     image: rabbitmq:3.8.14-management-alpine

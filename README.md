@@ -49,13 +49,13 @@ services:
       PYTHONPATH: /app/backend
     depends_on:
       - redis
-      
+
   redis:
     image: redis:7.2.4-alpine
     volumes:
       - redis_data:/data  # For Redis persistence
     command: redis-server --appendonly yes  # Enable AOF persistence
-    
+
   # RabbitMQ service (commented out by default)
   # This is only for demonstration and testing. For production use,
   # you'll typically connect to your existing RabbitMQ instances.
